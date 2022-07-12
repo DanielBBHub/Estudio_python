@@ -1,0 +1,47 @@
+Puntos importantes sobre cuando usar programacion orientada a objetos:
+    -No siempre es necesario crear una clase para el problema que queremos resolver. Si es, principalmente, un problema de 
+    comportamiento podemos sencillamente crear una funcion para suplir esa necesidad. Si, por otro lado, es un problema de
+    información, lo mas adequado es almacenarla en una lista/tupla/dic ...
+
+    -Para crear una clase necesitamos que ese "objeto" del problema tenga información a guardar y un comportamiento en relacion,
+    que implementaremos en forma de metodos
+    *P.J. si queremos representar un cuadrado lo podemos hacer en una lista de tuplas conteniendo una coordenada x,y. Tambien
+    es verdad que si queremos calcular la distancia entre dos puntos debemos utilizar una funcion (como "distancia()" en 
+    info_comportamiento_clases.py). Dicho esto, podemos observar que la *informacion* sobre los puntos y el *comportamiento*
+    de las funciones podrian formar una clase poligono
+
+    -Si es verdad que en el uso práctico, en este caso, es mas compacto el calcular el perimetro con una lista de tuplas,
+    puede ser que en un futuro no se sepa que hace esta lista, o incluso la funcion, y necesitariamos de documentacion
+    para saber que hace el codigo. 
+    *cuadrado = [(1,1),(1,2),(2,2),(2,1)]
+    print(perimetro(cuadrado))
+
+    -Por otro lado, tenemos las definiciones del objeto y los vertices y la llamada a la funcion para calcular el perimetro:
+    *cuadrado = Poligono()
+    cuadrado.anyadir_vertice(Punto(1,1))
+    cuadrado.anyadir_vertice(Punto(1,2))
+    cuadrado.anyadir_vertice(Punto(2,2))
+    cuadrado.anyadir_vertice(Punto(2,1))
+    print(cuadrado.calcular_perimetro())
+
+    -La distincion entre crear una clase o encapsular informacion y comportamientos en listas y funciones es una funcion de diseño,
+    pero en general, cuanto mas importante sea un set de informacion, mas probable sera que tenga funciones en relacion a esa 
+    informacion en especifico y mas util sera encapsularlo todo en una clase con atributos y metodos
+
+    -Normalmente los lenguajes de programacion instan a crear la clase con metodos y atributos semi-privados / privados para 
+    el uso de los objetos, ya que su regla n1 es no acceder directamente a los atributos. En el script "cagarse_en_java.py" se crea
+    una clase Color, la cual tiene un valor RGB en una variable publica y un string para el nombre en una variable semi_privada.
+    Por otro lado la manera que tenemos de cambiar y obtener el nombre se han declarado semi_privadas tambien (_get_nombre() y _set_nombre)
+    Finalmente tenemos la declaracion : name = property(_get_nombre, _set_nombre), que crea un nuevo atributo en la clase llamado "name"
+    para reemplazar el atributo directo nombre. Una vez se use este atributo, gracias a "property()" se llamaran a los metodos que tenga dentro
+    
+    -Con la funcionalidad de las propiedades desdibujando la linea entre informacion y comportamiento puede ser dificil llegar a 
+    decidir cuando elegir un atributo, un metodo o una propiedad. En nuestro ejemplo anterior, puede que tengamos informacion a la 
+    que queremos darle un comportamiento despues, como en la variable "name", la cual podemos acceder, obtener y modificar. Lo unico
+    que diferencia una propiedad de un atributo, es que con esta podemos realizar acciones cuando se obtiene, modifica o elimina esta.
+
+    -Las propiedades son muy utiles cuando hay que obtener un calculo complejo o pesado para el ordenador (consulta BBDD o una peticion de red),
+    con lo que las aprovechamos para "cachear" esta informacion y obtenerla casi al instante una vez la pidamos. En el ejemplo del script
+    "web.py" creamos una clase que recibe un link en el constructor y lo almacena. Hemos creado un "getter" personalizado que, una 
+    vez llamemos a "content()" este cargara la pagina del link. En el caso de que sea la primera vez que se realiza esta peticion cargara la pagina, 
+    si ya se ha realizado simplemente tendra que devolverlo. Esto se debe a que se guarda en la memoria RAM, mucho mas accesible.
