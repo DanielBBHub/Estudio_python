@@ -1,0 +1,2 @@
+class EscepcionDePrueba(Exception):
+    pass

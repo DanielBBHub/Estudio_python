@@ -1,0 +1,160 @@
+Puntos importantes sobre las excepciones:
+    
+    -Se utiliza la palabra "raise" seguida de el tipo de error que queramos levantar para hacer aparecer excepciones 
+    manualmente, lo que pausa la ejecucion del codigo. 
+    * raise TypeError("Solo pueden añadirse enteros")
+
+    -El codigo que haya detras de una excepcion nunca se ejecutara, incluso si donde salta 
+    la escepcion es una funcion llamada dentro de otra
+
+    -Podemos controlar las excepciones con la sintaxis:
+        try:
+        ...
+
+        except:
+        ...
+        Donde en la primera parte ejecutaremos el codigo que creamos que puede levantar una escepcion
+        y en la segunda ejecutaremos el codigo que queramos, una vez ha dado error.
+        El unico problema es que cogera cualquier escepcion, con lo que en el apartado "except" podemos 
+        especificar el error que recogamos
+        
+        *try:
+            return 100 / num
+        except ZeroDivisionError:    
+            print("--------------Segunda prueba---------------")
+            print("No se puede dividir entre cero") 
+
+        En este ejemplo, si ejecutamos con un 0 como argumento saltará la escepcion que esperamos. Si lanzamos con un
+        número no dara ningun problema. Sin embargo, si lo hacemos con un string lanzara un error "TypeError".
+
+    -Se recomienda escribir explicitamente el tipo de error que se espera recibir, aun que quieras recogerlos todos.
+    En este caso se deberia representar tal que: "except Exception:"
+
+    -Podemos acumular los except para ejecutar diferentes lineas de codigo dependiendo del error que recogamos (solo se ejecutara 1 de estos except):
+        *try:
+            if num == 13:
+                raise ValueError("13 agarramela que me crece")
+            return 100 / num
+        except ZeroDivisionError:    
+            print("Introduce un numero diferente a cero")
+        except TypeError:
+            print("Introduce un numero")
+        except ValueError:
+            print("No aprendes o que chaval, el 13 no!")
+            raise
+
+        En este ejemplo podemos ver que contemplamos 3 escenarios de error, con diferente resultado entre ellos.
+        Lo curioso es que, si num = 13 el primer raise ValueError() se levantara una vez haya recogido el error dentro
+        del except, ejecutando ambos trozos de codigo.
+
+        *--------------Prueba con valor: 13 --------------- [@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@]
+        La funcion division_jajas3() comienza aqui
+        No aprendes o que chaval, el 13 no!
+        Traceback (most recent call last):
+        File "c:/Users/ruxzf/Libro python/Chapter_4/main.py", line 25, in <module>
+            print(p.division_jajas3(val))
+        File "c:\Users\ruxzf\Libro python\Chapter_4\prueba_excepciones.py", line 44, in division_jajas3
+            raise ValueError("13 agarramela que me crece")
+        ValueError: 13 agarramela que me crece
+
+    -En el caso de haber multiples except con diferentes errores, si estos son subclases de otros. Si recogemos Exception 
+    antes que TypeError, solo se lanzara el de Exception, ya que el segundo es una subclase del primero. En caso contrario se
+    correria los dos trozos de codigo
+
+    -Podemos recoger el argumento de un error explicitandolo en la linea de except
+        *try:
+            raise ValueError("Esto es el argumento")
+        except ValueError as error:
+            print("Este es el argumento del error recogido: {}".format(error))
+
+    -Si queremos ejecutar codigo en estos bloques try: except: si no hay ningun error, o incluso aun que lo haya
+    podemos hacer servir la siguiente sintaxis
+        *else:
+            print("Este codigo se ejecuta si no hay ningun error")
+        finally:
+            print("Este codigo se ejecuta siempre")
+        
+        En el caso de tener un return en la clausula try:, el codigo de finally se ejecutara antes de que se devuelva,
+        pero no ejecutara ningun codigo despues del try:... finally:
+
+    -El orden de estos bloques es algo a tener en cuenta, ya que se ha de ir de mas especifico a mas general:
+        try -> except -> else -> finally
+
+    -Todas las excepciones heredan de la clase BaseException y en la jerarquia de excepciones se ven de la siguiente manera:
+                                    BaseException
+                SystemExit          KeyboardInterrupt           Exception
+
+                                                                El resto de excepciones
+                                                                que derivan de Exception
+
+        *La excepcion SystemExit salta naturalmente cuando se va a cerrar un programa. Podemos recogerla y ejecutar codigo si
+        lo necesitamos antes de matar el proceso. (p.j. Un usuario no ha guardado los cambios antes de salir de una ventana)
+        La excepcion KeyboardInterrupt salta cuando el usuario cierra manualmente un programa (Cntrl + C)
+        Si usamos except: (sin especificar el error), recogera todas las instancias de BaseException y sus subclases
+
+    -Podemos crear nuestras propias excepciones, como quien crea una subclase mas. Normalmente se le pone un nombre el cual
+    sea autoexplicativo en el error que ha sucedido, y se extiende la clase Exception. El punto fuerte de las excepciones 
+    personalizadas es la construccion de APIs o librerias de codigo abierto, en las que se le puede ayudar al desarrollador
+    a debugear su codigo con estos mensajes
+        *Traceback (most recent call last):
+            File "c:/Users/ruxzf/Libro python/Chapter_4-Excepciones/main.py", line 56, in <module>
+                raise EscepcionDePrueba("Estas quajao niño, que haces Knekrin")
+            nueva_escepcion.EscepcionDePrueba: Estas quajao niño, que haces Knekrin
+
+    -Es importante implementar excepciones en el codigo, antes que comprobacines con condiciones, ya que:
+        1-Con los if ejecutas un proceso que no tiene por que ocurrir si esperas a recoger una escepcion
+        2-Puedes no contemplar todos los posibles errores que tenga el código
+
+RESUMEN EJEMPLO TAREA:
+    -Se ha montado un sistema de autentificacion y autorizacion de usuarios, con la implementacion de varios scripts:
+    
+    -"usuario.py"
+        -Este archivo contiene la clase Usuario, objeto el cuyal guardara un nombre de usuario, una contraseña y si el usuario
+        ha iniciado sesion o no
+         
+        -El metodo "_encrypt_pw()" recibe una contraseña y, combinando el nombre de usuario y la contraseña encripta esta 
+        concatenacion
+
+        -El metodo "comprobar_contra()" comprueba que la contraseña introducida sea valida
+
+    -"excepciones.py"
+        -Este archivo contiene la declaracion de varias excepciones para el completo debugeo del programa
+
+        -Todas las excepciones heredaran de la super-excepcion "AuthExcepcions", pensada para crear una base de excepciones,
+        a la que podemos añadirle un nombre de usuario y un objeto usuario
+
+        -La excepcion "NombreExistente" esta pensada para ser usuada en la autentificacion del usuario, cuando el nombre
+        que haya introducido para registrarse ya este inscrito
+
+        -La excepcion "ContrasenyaDemasiadoCorta" se lanzara cuando vaya a registrar un usuario con una contraseña demasiado CorrectorTarea
+
+        -La excepcion "NombreInvalido" se lanzara cuando no se pueda usar ese nombre en alguna funcion de la pagina
+
+        -La excepcion "ErrorDePermisos" se lanzara cuando se compruebe que un usuario no tiene unos permisos en concreto
+
+        -La excepcion "SinLogear" se lanzara cuando comprobemos si el usuario ha iniciado sesion o no a la pagina
+
+        -La excepcion "ErrorSinPermisos" se lanzara cuando no exista el permiso el cual se esta buscando
+
+    -"autentificador.py"
+        -Este archivo se ha concebido para tener un metodo de añadir, logear y comprobar el estado de sesion de los usuarios
+        de la app
+
+        -El metodo "añadir_usuario()" recibe dos parametros, nombre de usuario y contraseña. Se comprueba que el nombre introducido
+        no exista ya dentro del diccionario de usuarios, en el caso de que exista se lanzara la excepcion "NombreExistente". 
+        Por otro lado se comprueba que la longuitud de caracteres de la contrasenya sea mayor a 6, en caso negativo se lanzara la excepcion
+        "ContrasenyaDemasiadoCorta". En el caso de que se superen ambas condiciones se añadira un objeto Usuario, con el nombre y contraseña introducidos,
+        en el diccionario de usuarios
+
+        -El metodo "login()" recibe dos parametros, nombre de usuario y contraseña. Se comprueba la existencia de el usuario en concreto, si existe se recoge
+        el objeto Usuario, si no se lanza la excepcion "NombreInvalido". Por otro lado comprobamos tambien la existencia de la contraseña, si no existe se lanza
+        la excepcion "ContraseñaInvalida". En el caso de superar las comprobaciones, desde el objeto usuario se cambia el estado de "logeado"
+        de False a True
+
+        -El metodo "usuario_logeado()" recibe por parametro el nombre de usuario y comprueba y devuelve, si esta dentro del listado de usuarios, el estado de sesion de este.
+
+        -El metodo "logof()" recibe por parametro el nombre de usuario y cambia el estado de sesion del usuario de True a False
+
+    -"autorizador.py"
+        -Este archivo se ha implementado para dar y comprobar los permisos que puedan tener los usuarios en la app que desarrollemos. En el 
+        constructor de este se asigna un objeto Autentificador para poder obtener informacion tanto de esta clase como de la clase Usuario
