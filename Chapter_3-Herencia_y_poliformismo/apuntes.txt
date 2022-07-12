@@ -1,0 +1,113 @@
+Puntos importantes sobre la herencia:
+
+-Una declaración de clase sin especificar la herencia (class Clase:) siempre heredara de la clase "Object", integrada en python
+-Para declarar la herencia de una subclase se hace de la siguiente manera: class SubClase(Clase)
+
+-def __init__(self, name, email):
+        self.name = name
+        self.email = email
+        #Asignamos el nombre y el mail a la variable de la clase, creando una unica instancia
+        Contact.all_contacts.append(self)
+En este ejemplo podemos ver como en el constructor recibimos un nombre y un email y lo añadimos a una lista creada en el objeto
+    *es importante tener en cuenta que Contact.all_contacts es una lista única para todas las instancias de la clase Contact
+
+-Se puede crear una subclase que herede de una ya implementada para cambiar su funcionalidad: 
+    class ContactList(list):
+Como este ejemplo, en el que creamos una clase ContactList para añadir un método para buscar en una lista
+usaremos este objeto para guardar los contactos del objeto Contact y buscar en esta lista con el método "buscar()"
+
+-Siguiendo la subclase que hereda de Contact, creamos Friend, objeto en el que ademas de nombre y email guardaremos un tlf
+class Friend(Contact):
+    def __init__(self, name, email, phone):
+        super.__init__(name, email)
+        self.phone = phone
+
+
+Puntos importantes sobre el polimorfismo:
+-El polimorfismo nos ayuda a darle varias funcionalidades a una clase dependiendo de, por ejemplo, el valor de entrada
+del constructor
+-La superclase puede acceder a las variables de las subclases que heredan de ella:
+    def __init__(self, filename):
+        #Usamos el polimorfismo para acceder al valor de "ext" de las subclases
+        if not filename.endswith(self.ext):
+            raise Exception("Formato invalido")
+        
+        self.filename = filename
+    *como en este ejemplo que compara la extension del nombre del archivo introducido con las que tienen las subclases
+    que heredan de esta
+
+-La naturaleza dinamica de python permite saltarnos el polimorfismo con "duck typing", lo que nos permite usar cualquier
+objeto que nos de el mismo comportamiento sin necesidad de forzarlo en una subclase (como en Flac)
+
+-Podemos crear clases que, aun que no hereden de ninguna explicitamente, estas pueden usar el polimorfismo en sus métodos, 
+"heredando" e "instanciando" otra clase.
+
+    def __contains__(self, x):
+        # The isinstance() function returns True if the specified object is of the specified type, otherwise False.
+        # If the type parameter is a tuple, this function will return True if the object is one of the types in the tuple.
+        if not isinstance(x, int) or not x % 2:
+            return False
+
+        return True
+    *como en este ejemplo en el que, sin explicitar que "OddContainer" hereda de la clase "Container", sobreescribimos el
+    metodo __contains__(). Al comprobar si este objeto es una instancia y una subclase, el resultado es True en ambos casos
+
+-Para la creacion de ABCs (Abstract Base Clases) se ha de importar "abc"
+
+-En el caso de marcar los metodo o propiedades de una clase abstracta con: (@abc.abstractclassmethod , @abc.abstractproperty)
+determinas que, para cada clase que quiera heredar de esta ha de implementar estos metodos o propiedades. Ademas, 
+__subclasshook__ determina, en el caso de que cumpla con los metodos/propiedades de la clase, que es una subclase
+
+
+RESUMEN EJEMPLO TAREA:
+    -Para este ejemplo hemos decidido crear un programa de prueba con el que se puedan introducir tareas,
+    como clases, y se puedan responder. Ademas de esto, se monitorizaran los intentos de los usuarios mediante
+    una clase y al acabar se hará un resumen del desempeño del usuarios
+
+    -"ejecutar_ejemplo_tarea.py":
+        -Se crea un objeto calificador y se registran las dos tareas implementadas:
+        (tarea_introduccion.py y estadisticas.py)
+        -Se comienza la tarea desde el calificador con "empezar_tarea()"
+        -Se imprime por pantalla los diferentes pasos:
+            -Leccion de Daniel:  
+                    Hola, Daniel. Define dos variables, un entero a con valor '1'
+                    y un string b con valor 'hola'
+
+                    Comprobacion de Daniel:  False
+                    Comprobacion segunda de Daniel:  True
+
+                    Daniel ha realizadolos siguientes intentos en la siguiente tarea::
+
+                    intentos: 2
+                    correctos: 1
+                    superados: True
+        *La tarea a realizar "obtener_tarea()", las comprobaciones de los distintos intentos "comprobar_tarea()"
+        y el resumen de esta "resumen()"
+
+    -"calificador_notas.py"
+        -Esta clase se utilizara para hacer las comprobaciones entre las respuestas del usuario y las soluciones
+        -En el constructor definimos diccionarios para guardar las tareas y a los estudiantes
+        -Se define el metodo "registro()" para, primero comprobar si la tarea recibida concuerda con la 
+        estructura de la ABC "Tarea". 
+        Si concuerda se crea un ID y se guarda en "calificadores_tarea" con el id generado como key y se 
+        devuelve el ID.
+        -El metodo "empezar_tarea()" recibe un nombre de estudiante y un ID que referencia a una tarea e 
+        instancia un objeto de "CorrectorTarea" con estos argumentos
+        -El metodo "obtener_tarea()" recibe un nombre de estudiante ydevuelve el enunciado de la tarea que se va a realizar
+        -El metodo "comprobar_tarea()" recibe un nombre de estudiante y la respuesta a la tarea y llama a la funcion 
+        "comprobar_codigo()" de la clase "CorrectorTarea", la cual llama al metodo "comprobar_codigo()" de la subclase
+        de Tarea en cuestion que comprueba la contestacion con la respuesta
+        -El metodo "resumen()" devuelve un string en el que aparecen: num. intentos, aciertos y si se ha superado la tarea
+
+    -"corrector.py"
+        -Esta clase se utilizara para monitorizar el numero de intentos del usuario
+        -El constructor recibe un nombre de estudiante y la clase de la tarea que va a realizar, ademas de 
+        inizializar los contadores de intentos y aciertos
+        -El metodo "comprobar_codigo()" aumenta en uno el contador de intentos y llama al metodo "comprobar_codigo()"
+        de la clase de la tarea, la cual, si la respuesta introducida es igual a la solucion, la devolvera. En el caso
+        de que devuelva la respuesta se aumentara en uno el contador de aciertos
+        -El metodo "leccion()" devuelve el enunciado de la tarea que se va a realizar
+
+    -Tareas implementadas:
+        -estadisticas
+        -tarea_introduccion
