@@ -239,5 +239,7 @@ print("Diferencia equivale a un operador - : " + str(union - space_hammu))
 print("\n--------------[Ejemplo tarea recolector URLs]-------------- \n")
 from ejemplo_tarea.recolector_urls import RecolectorDeLinks
 
+# Para comprobar el ejemplo has de ejecutar "python -m http.server" en una cmd dentro del
+# directorio /ejemplo_tarea para poder acceder a los archivos html
 recolector = RecolectorDeLinks("http://localhost:8000/")
 recolector.recoger_links()
