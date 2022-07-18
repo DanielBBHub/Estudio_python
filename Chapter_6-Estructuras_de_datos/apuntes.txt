@@ -1,0 +1,151 @@
+Puntos importantes sobre la estructura de datos:
+
+    -"Object" es la superclase por defecto. Si bien podemos instanciarla con "o = Object()", al intentar algo tan simple como
+    darle valor a un atributo de ese objeto, "o.x = 2", saltara error: 
+        o.x = 2
+        AttributeError: 'object' object has no attribute 'x'
+    Esto es debido a que en Python se desactivan las propiedades por defecto. Por otro lado podemos crear una clase vacia "MyObject()"
+    y ejecutar el mismo codigo, que antes daba error, para asignar un valor a un atributo
+
+    -Las tuplas son objetos que guardan un numero especifico de objetos en orden. Estas son inmutables, es decir, no se pueden editar al vuelo. 
+    El proposito principal de las tuplas es guardar diferentes tipos de informacion en un mismo
+    container. 
+    
+    Estas se declaran separando la informacion con comas. Si queremos pasar esta tupla como argumento a una 
+    funcion hemos de acotarla dentro de parentesis para que el interpretador no tome erroneamente el segundo indice como
+    otro argumento de entrada.
+
+    Podemos explicitar que valor de la tupla queremos recoger en que variable dentro de la funcion de la siguiente manera: 
+    *simbolo, actual, bajo, alto = tupla, bien si le hemos pasado la tupla como una ya construida o si le hemos pasado una 
+    informacion dentro de parentesis y separada por comas: *def medio(tupla, fecha): o 
+    def medio(("hola", 18, 17.46, 24), datetime.date(2022, 7, 11)). Este concepto se le conoce como "desempaquetar"
+
+    -En el caso de querer agrupar varias piezas de informacion juntas que vamos a consultar frequentemente una por una podemos usar las tuplas con nombre. 
+    Esta en especifico acepta dos tipos de parametros: el primero es un string para la tupla con nombre y el segundo son identificadores para la informacion. 
+
+    Se puede acceder a las piezas de informacion como lo harias con un atributo de una clase:  
+    str(stock.simbolo) + " : " + str(stock.alto) == hola : 24. Pero como pasa con las tuplas normales, 
+    seguimos sin poder modificar el objeto que guardan, 
+    con lo que si no va a ser informacion definitiva deberiamos escoger otra via.
+
+    -En el caso de que queramos utilizar una estructura similar a las tuplas con nombre podemos usar una "dataclass". Son parecidas a estas pero son 
+    modificables, ademas de tener una estructura de clase, como su nombre indica, y una representacion mas util de strings.
+
+    Una dataclass tambien puede ser definida en base a un decorador "@dataclass", seguido de la declaracion del nombre y propiedades que puede 
+    abarcar una. Con una simple definicion de propiedades y los tipos correspondientes podemos tener una instancia donde guardar nuestra informacion
+    *@dataclass
+     class StockDecorado:
+         nombre: str
+         actual: Any
+         bajo: float
+         alto: float
+    *Las dataclasses no son iterables, es decir, no puedes meterlas en un bucle y obtener o desmempaquetar los valores de estas*
+
+    -Por otra parte tenemos los diccionarios. Esta estructura de datos nos permite mappear cualquier objeto con una relacion llave-valor. Podemos instanciar
+    un diccionario de varias maneras: dict() o variable_diccionario = {...}. Si este diccionario no contiene una llave que estemos buscando, saltara un 
+    error en el codigo. Para que esto no suceda podemos recoger la excepcion, inclusive crear una personalizada como ya hemos hecho, o utilizar el 
+    metodo "setdefault()" que tiene la clase dict() para asegurarnos de que si no forma parte del diccionario, ahora lo sea.
+
+    Tenemos unos metodos interesantes para los objetos de diccionario, como "keys()", "values()" o "items()". Los primeros dos nos dan un iterador sobre
+    todas las llaves y valores del diccionarios que podemos utilizar para plantear bucles "for()". Por otro lado, el ultimo de los tres es quizas el mas util,
+    ya que nos deja tuplas de llaves-valores para trabajar.
+
+    Por ultimo se ha de decir que se pueden cambiar los valores de los items de un diccionario como si fuesen una variable normal. Simplemente se especifica
+    que posicion (llave) se quiere cambiar y se le asigna el valor.
+    *No se pueden utilizar listas o diccionarios como llaves en los diccionarios, por otro lado no hay restricciones en los valores que puedes introducir*
+
+    -Para resumir, si necesitas una estructura de datos que tenga una relacion entre llave-valores pero sabes por adelantado cuales van a ser esas llaves,
+    lo mas recomendable es elegir las tuplas con nombre. En el caso de no saber que valor tomaran esas llaves, lo optimo es elegir los diccionarios.
+
+    -Usar la funcion "setdefault()" puede llegar a ser monotono cuando no sabemos si existe ya una llave en un diccionario en concreto y tenemos que crearla. 
+    Para esto existen los "defaultdict", que eliminan la necesidad de comprobar cada vez que vayamos a introducir un nuevo valor en el diccionario si ya tiene 
+    una llave.
+
+    Los defaultdic aceptan una funcion en us constructor. Cada vez que se accede una llave que no existe en el diccionario, llama a una funcion sin argumento 
+    y crea un valor por defecto. En el caso de la funcion "word_frecuenci_defaultdict()" declaramos el defaultdic de la siguiente manera: frecuencias = defaultdict(int),
+    indicando el constructor para un objeto int. En este caso, el constructor del objeto int nos devuelve convenientemente un 0, con lo que cada vez que no exista una 
+    llave, se le asignara el valor entero 0.
+
+    -Existe tambien el objeto Counter, que hace las veces de diccionario, en el que las llaves son los objetos que se estan contando y los valores las veces que estos objetos
+    aparecen, como por ejemplo en la funcion "word_frecuency_counter()"
+
+
+    -Las listas son una estructura de datos extremadamente eficiente, con una potente estructura interna, para que nos preocupemos de que 
+    estamos guardando, en vez de como. Dicho esto, hay que tener en cuenta que es lo que vamos a introducir en ellas, ya que pueden haber 
+    alternativas mas optimas a las listas (ejemplo letters_frequency(), en el que se vuelve dificil de leer a primera vista y engorroso). Es recomendable
+    que las listas guarden valores que tengan un tipo de relacion entre ellos.
+
+    Este objeto tiene varios metodos bastante utiles a la hora de trabajar con, y administrar, la informacion guardada dentro de ellas:
+        -append(elemento): añade en la ultima posicion el elemento indicando
+        -insert(indice, elemento): añade en la posicion indicada (indice) el elemento indicando
+        -count(elemento): cuenta cuantas veces aparece el elemento en la listas
+        -index(): nos devuelve el indice de un elemento, en el caso de que exista, o levanta una excepcion
+        -reverse(): da la vuelta a la listas
+
+    En cuanto al metodo "sort()", si no tiene ningun argumento, ordenara la lista, por orden alfabetico si es de strings, por orden creciente si es
+    de numeros. Si, por otro lado, queremos introducir otros objetos dentro de la lista, habra que implementar el metodo __lt__() (less than), el cual 
+    llamara cada vez que se ordene la lista. 
+
+    Hemos implementado un objeto "ListaOrdenada" con un metodo __lt__(), con el que compararemos los objetos, y otro __repr__() que sera llamado cuando imprimamos
+    la lista por pantalla, con el que podremos ver claramente los objetos comparados. 
+        -En el metodo __lt__() se comprueba si self.num_ordenado es True o False, comparando el objeto con cualquier otra instancia del 
+        mismo, para saber a que posicion pertenece en concreto el objeto evaluado. El objeto a evaluar sera el numero o el string dependiendo
+        del valor de num_ordenado.
+        -En el metodo __repr__() se devuelve un string formateado con le letra y el numero evaluados, en este caso, para mejor claridad
+
+    Noramlmente para que fuese una lista funcional, es decir, para poder usar los operadores logico-aritmeticos (<, >, ==, !=, >=, <=), habria que implementar tambien
+    los metodos __gt__(), __eq__(), __ne__(), __ge__() y __le__(). Podemos evitarlo implementando unicamente los metodos __lt__() y __eq__() y añadiendo el decorador
+    @total_ordering.
+
+    Esto es util si queremos aplicar una comparacion con nuestros objetos, pero puede llegar a ser overkill. Si no queremos realizar esta implementacion podemos 
+    añadir un argumento a la funcion sort(), siendo esta una fucnion que puede traducir cada objeto de una lista en uno que sea, de alguna manera, comparable.
+
+    -Las listas son herramientas super versatiles que pueden encajar en muchos programas, pero son malas en asegurar que el contenido que tienen es unico. Debido a esta 
+    faceta surgen los sets, que vienen de las matematicas y representan un grupo desordenado, normalmente con miembros unicos (por mucho que añadamos un numero 1000 veces
+    solo aparecera 1).
+
+    Estos sets pueden albergar cualquier objeto "hashable" (que puede sufrir una transformacion a hash), como las llaves de los diccionarios. Salen 
+    representados desordenados, en cuanto al orden de introduccion, debido al valor hash que tiene asignado cada objeto introducido. Esto se debe a 
+    la optimizacion para la eficiencia de los sets. Debido a esto no se puede acceder a los valores de los sets a partir de indices.
+
+    Los sets estan pensados para ser utilizados optimamente en conjunto con otros sets, utilizando los metodos construidos dentro del objeto:
+        -union(segundo_set): requiere de otro set como argumento de entrada y devuelve un nuevo set que contiene todos los elementos de los dos sets
+        -intersection(segundo_set): requiere de otro set como argumento de entrada y devuelve un nuevo set conteniendo, solo, los elementos comunes a los dos sets
+        *estos dos metodos devolveran el mismo resultado sin importar que set es el que llama al metodo*
+        -symetric_difference(segundo_set): requiere de otro set como argumento de entrada y devuelve uno nuevo que contiene uno de los dos sets
+        -difference(segundo_set): requiere de otro set como argumento de entrada y devuelve uno nuevo en el que estan todos los elementos que estan en el set que llama a la
+        funcion, pero no en el que se le pasa por parametros
+
+    Los metodos union() e intersection() incluyen otros metodos como lo son "issubset()" e "issuperset()" que comparan los dos sets involucrados, el que llama a la 
+    funcion y el que es pasado como argumento, y devuelve True en el caso de que sean identicos y False en el caso contrario.
+
+    Finalmente, merece la pena destacar que los sets son una estructura de datos mas eficiente cuando se usa la keyword "in", como en "valor in contenedor". Esto devolvera True si
+    si uno de los elemento del conenedor es igual a valor, o False si ninguno es equivalente, teniendo la particularidad de que en las listas se compararan todos y cada uno de los 
+    elementos de estas hasta que encuentra uno igual, mientras que en el set transformara el "valor" a hash y buscara su pertenencia a este.
+
+    -Cuando tenemos un contenedor ya implementado al que queremos añadirle funcionalidad podemos utilizar la herencia para añadir y modificar los metodos, como ya vimos en el Chap.3,
+    o la composicion, para crear un objeto que pertenezca a una clase. Si solo queremos tratar la informacion con las caracteristicas de ese tipo de contenedor, lo mejor es usar la composicion,
+    sin embargo, si queremos cambiar la forma en la que funciona el contenedor para un fin concreto, debemos usar la herencia.
+    *Ej: queremos asegurarnos de que una lista admita unicamente strings de len = 5. Tendriamos que hacer override en la funcion "append()" y añadir una comprobacion que levantase una 
+    excepcion si se trata de añadir un string mas largo.
+
+    A lo que se quiere llegar es a que gracias al diseño de los programadores de Python podemos usar operadores simples que no son funciones orientadas a objetos que llaman a funciones creadas
+    dentro de las clases que definen los objetos. 
+    *Ej: 
+        c = a + b 
+        c = a.add(b)
+
+    Estas dos lineas son equivalentes, las dos haran la combinacion de las variables a y b y las guardaran en la c, pero hemos de saber que el operador + esta llamando por detras a la funcion 
+    implementada en el objeto Int, por poner uno, como metodo __add__(), el cual sumara estas cifras. De la misma manera, si a y b fuesen strings, estos se concatenarian y se guardarian en la variable
+    c unicamente con el operador +.
+
+
+RESUMEN EJEMPLO TAREA:
+    -En este ejemplo hemos desarrollado un objeto el cual pueda recibir un link como argumento en el constructor y, con la llamada de la funcion 
+    "recoger_links()" recoga, valga la redundancia, todos los links de la pagina. Este proceso automatizado guardara en un diccionario la pagina que 
+    ha visitado y los links que ha extraido de esta.
+
+    -recoger_links(self, path="/"): esta funcion esta declarada directamente con el argumento "path" el cual es una barra simple. La funcion se ocupa 
+    de preparar la peticion HTTP y realizar la llamada al servidor HTTP oportuno mediante la libreria urllib, ademas de guardar los enlaces que recoga, 
+    ya sea los visitados, que se usaran como llaves en el diccionario de enlaces recogidos, como los no visitados, que se utilizara para seguir visitando
+    los enlaces que se hayan recogido pero no visitados
