@@ -14,8 +14,8 @@ Los dos primeros capitulos de este repositorio son:
  
  Los conceptos que se ven representados en este repositorio tienen ejemplos de uso
  dentro de los mismos capitulos. Los diferentes ejemplos implementados en orden son:
-  -Proyecto de creacion y correccion de tareas
-  -Sistema de autenticacion y autorizacion de usuarios
+  -Proyecto de creacion y correccion de tareas\n
+  -Sistema de autenticacion y autorizacion de usuarios\n
   -Modificacion de archivos (texto e imagenes) y creacion de un ejemplo de jugete de
-  un editor de texto sin interfaz
-  -Recolector de enlaces de paginas web
+  un editor de texto sin interfaz\n
+  -Recolector de enlaces de paginas web\n
