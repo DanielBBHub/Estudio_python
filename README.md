@@ -6,9 +6,11 @@ desarrollado por Daniel Benavides Belmonte con el objetivo de profundizar en el
 lenguaje de programacion y que sirva como base para empezar a interesarse en él
 para personas ajenas a este.
 
-Los dos primeros capitulos de este repositorio son:
-  -Diseño orientado a objetos
-  -Objetos en Python
+Los dos primeros capitulos de este repositorio son:  
+
+  -Diseño orientado a objetos  
+  -Objetos en Python  
+  
  en los cuales se enseñaria como plantear un objeto y como crearlo. Se ha decidido 
  obviar estos para la documentacion de este repositorio.
  
