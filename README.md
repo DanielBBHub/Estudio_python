@@ -13,7 +13,8 @@ Los dos primeros capitulos de este repositorio son:
  obviar estos para la documentacion de este repositorio.
  
  Los conceptos que se ven representados en este repositorio tienen ejemplos de uso
- dentro de los mismos capitulos. Los diferentes ejemplos implementados en orden son:
+ dentro de los mismos capitulos. Los diferentes ejemplos implementados en orden son:  
+ 
   -Proyecto de creacion y correccion de tareas  
   
   -Sistema de autenticacion y autorizacion de usuarios  
