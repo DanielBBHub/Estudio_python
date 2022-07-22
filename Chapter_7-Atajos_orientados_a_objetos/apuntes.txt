@@ -1,0 +1,220 @@
+Puntos importantes sobre atajos orientados a objetos:
+    -En Python hay una variedad de funciones que, bien siendo calculos comunes, son aplicables a varias clases. Estas son las funciones
+    "built-in". En este apartado vamos a cubrir algunas de las mas importantes:
+        -len():
+            El ejemplo mas basico es la funcion len(), que cuenta la cantidad de objetos que hay en un contenedor, como podria ser una lista o
+            un diccionario. La mayoria de objetos que pueden llamar a len() tienen un metodo privado __len__(), con lo que len(objeto) equivale a 
+            objeto.__len__().
+            Por un lado, deberiamos llamar a len() ya que __len__() es un metodo al que, recomendablemente, no deberiamos llamar directamente.
+            *Principalmente por eficiencia en la ejecucion, ya que al llamar al metodo privado, tiene que buscar el metodo en su espacio de trabajo y,
+            si el metodo__getattribute__() esta declarado en el objeto, este se llamara tambien.
+        
+        -reversed():
+            La funcion reversed() recibe cualquier sucesion de objetos y devuelve una copia de estos con el orden invertido. Se usa normalmente para
+            realizar una iteracion de final a principio en un bucle for. Similarmente a len(), esta funcion llama a __reversed__(), en el caso de que
+            este declarada. En caso contrario creara la copia a partir de las funciones __len__() y __getattribute__()
+
+        -enumerate(): 
+            Los bucles for en Python no nos proveen con ningun tipo de indice cuando se itera un objeto, con lo que no podemos saber que indice es el 
+            que se le atrubuye al objeto procesado. Con la funcion enumerate(), no solo obtenemos un indice, si no una secuencia de tuplas con dos 
+            posiciones en las que la primera es el indice del objeto y la segunda el objeto que se esta procesando en esa iteracion en concreto del bucle.   
+
+        -all() y any():
+            Estas funciones reciben un objeto iterable y True si todos los objetos, o alguno, son evaluados como True, o False en caso contrario.
+            La funcion all() tambien devuelve True si el objeto iterable esta vacio. 
+            *PJ: Estos objetos pueden ser una lista de strings no vacia, una lista de numeros diferentes a cero o una lista de booleanos.
+
+        -eval(), exec() y compile():
+            Estas funciones ejecutan strings como codigo dentro del interpretador. Se ha de tener cuidado de no ejecutar codigo de un usuario desconocido
+            *En concreto la funcion eval() parsea una expresion y la corre dentro del programa. PJ: numero_quadrado = eval('numero * numero').
+            *En cuanto a la funcion exec() ejecuta un programa creado dinamicamente, pudiendo ser un string o un objeto de codigo. PJ: program = 'a = 5\n b=10\n print("Sum = ", a+b)' 
+            exec(program)
+            *Para acabar, la funcion compile() recoge codigo como string y lo parsea convirtiendolo en un objeto de codigo preparado para ser ejecutado. PJ:
+            srcCode = 'x = 10\n y = 20\n mul = x * y\nprint("mul =", mul)' execCode = compile(srcCode, 'mulstring', 'exec')
+
+    Si tienes mas curiosidad sobre el resto de funciones implementadas puedes ejecutar help(__builtins__) para obtener un listado de todas las funciones "built-in"
+    que existen en Python
+
+    -Hasta ahora las funciones que hemos desarrollado solo han tocado archivos de texto, mientras que un sistema operativo trabaja con una representacion de 
+    secuencias de bytes. Ha de decirse que, aun que la lectura de informacion en archivos de texto es bastante enredada, Python hace la mayor parte del trabajo
+    por nosotros, enrollando la interfaz que provee el sistema operativo en una abstraccion que nos permite trabajar con ello.
+
+    La funcion open() es otra "built-in" que abre y devuelve el archivo como un objeto de archivo, si es un archivo de texto, convirtiendo los bytes en texto. Para 
+    lograr esto tenemos que introducir el nombre del archivo que queremos leer y el modo en el que lo queremos abrir, 'r' para lectura, 'w' para escritura. 'a' para 
+    adjuntar y 'x' para crear, ademas de poder especificar el tipo de contenido que tiene, 't' para texto y 'b' para binario. Estos modos pueden ser combinados para 
+    realizar diferentes acciones en los archivos.
+    PJ: para abrir una imagen con la funcion open() en modo lectura deberiamos declarar la llamada de la siguiente manera: open("nombre_imagen.jpeg", "rb")
+
+    Una vez hemos abierto el archivo, podemos llamar a las siguientes funciones para leer el contenido de este y escribir en el:
+        -read(): La funcion read() devuelve el contenido integro de el archivo en un objeto str o bytes (dependiendo del modo). Tambien es posible especificar
+        el numero de bytes que se quieren leer en una sola llamada, emprendiendo desde donde lo dejo en la llamada siguiente. Es bastante util, sobretodo, en bucles
+        for para la lectura de imagenes, para un procesado mas manejable
+
+        -readline(): La funcion readline() lee unicamente una linea del archivo que se esta manejando. Cada linea se separa por una nueva linea(\n), una devolucion de carro(\r) 
+        o ambas, dependiendo del sistema operativo que haya creado el archivo
+
+        -readlines(): La funcion readlines() devuelve una lista de todas las lineas que hay en el archivo. Como la funcion read(), no es aconsejable usarla en archivos muy 
+        grandes debido a la carga de memoria que acarrean.
+
+        *Las funciones read() y readlines() son aconsejables para leer archivos que no estan separados por \n o \r, como lo son las imagenes o los archivos de sonido, haciendo
+        uso de una especificacion de bytes, para evitar la sobrecarga de memoria, y llamandolas en un bucle "for".
+
+        -write(): La funcion write() escribe una objeto de texto, o bytes para informacion en binario. Puede ser llamado multiples veces para añadir varios trozos de informacion,
+        uno detras de otros
+
+        -writelines(): Ademas de hacer la funcion del metodo write(), esta acepta una secuencia de strings, escribiendo cada objeto iterado en el archivo. Este metodo no adjunta 
+        la informacion a una nueva linea.
+
+    
+    Por ultimo, tenemos el metodo close(), que deberemos utilizar una vez hayamos acabado de leer o escribir el archivo, para asegurarnos que la informacion almacenada se ha escrito,
+    que se ha limpiado correctamente el archivo y que los recursos asignados a este se devuelvan al sistema operativo.
+
+    -En cuanto al proceso, este puede levantar una excepcion en cualquier punto del mismo, con lo que se recomienda que se abran y modifiquen los archivos dentro de las clausulas 
+    "try ... except ..." para que no se cierre inesperadamente nuestra aplicacion y, para el momento de cerrar, hacer la llamada a close() dentro de la parte final de estas clausulas
+    "finally ...". Si, por un lado, esto es completamente funcional, hay una manera mas "bonita" de hacerlo, es decir, una manera de utilizar metodos o atributos ya declarados en los 
+    objetos de archivos para manejar errores.
+
+    Si corremos el comando "dir" sobre un objeto-archivo veremos que existen dos metodos llamados __enter__ y __exit__, que sumergen el objeto dentro de lo que se conoce como un manejador
+    de contexto. Basicamente si utizamos la sintaxis "with" para abrir un archivo, este llamara automaticamente a estos metodos, antes y despues de la ejecucion del codigo que alberga.
+    PJ: with open('nombre_archivo) as archivo:
+            for linea in archivo:
+                print(linea)
+
+    En este ejemplo, la llamada a open() devuelve un objeto, que tiene los metodos __enter__ y __exit__, y este se asigna a la variable "archivo". Se puede sobreescribir los metodos anteriores 
+    para que, una vez se acceda al archivo o se cierre, hagan una funcion personalizada cuando estemos manejandolo dentro de la sintaxis del "with"
+
+    -Una caracteristica prominente de la programacion orientada a objetos es la sobrecarga de metodos (method overloading) la cual, simplemente, se refiere a tener multiples metodos con el mismo 
+    nombre pero que acepten diferentes argumentos de entrada. En los lenguajes estaticos es conveniente si queremos diferenciar un metodo dependiendo si debe recoger un entero o una serie de caracteres,
+    por ejemplo. De todos modos, en Python hemos visto que solo necesitamos un metodo y comprobaciones del tipo de entrada.
+
+    Por otro lado, si es util si el metodo que queremos utilizar puede recibir diferentes sets de argumentos, como por ejemplo un mail. Un metodo para un mensaje de correo electronico puede aceptar 
+    un parametro para el "desde", indicando quien ha enviado el correo, mientras que otro puede tener una definicion por defecto para este campo.
+    PJ:
+        Un metodo que no recibe argumentos podria ser declarado de la siguiente manera:
+            def metodo_sin_argumentos():
+                pass
+
+        Y tendria una llamada tal que: metodo_sin_argumentos().
+
+        Mientras que un metodo con argumentos de entrada tendra una lista ordenada con los nombres de estos, sin poder saltarse ninguno:
+            def metodo_con_argumentos(x, y, z):
+                pass
+        
+        Y tendra una llamada tal que: metodo_con_argumentos("un string", una_variable, 5)
+
+        En el caso de que queramos declarar un argumento como "opcional" se puede conseguir asignandole un valor mediante un = en la declaracion del mismo metodo. En la llamada de este podemos especificar 
+        todos los argumentos, sobreescribiendo el valor por defecto, o saltarnos aquellos que no nos interese:
+            def metodo_con_argumentos(x, y, z, a="Una variable", b=False ):
+                pass
+
+        Y puede tener varias llamadas como las siguientes: metodo_con_argumentos("un string", una_variable, 5), metodo_con_argumentos("un string", una_variable, 5, "hola"), 
+        metodo_con_argumentos("un string", una_variable, 5, b=True). Como vemos podemos poner los valores de los argumentos en orden, saltarnos los que no nos interese y asignar directamente con un = el valor 
+        de un argumento en especifico. Por ultimo, puede que en algun escenario sea util especificacion un argumento para que solo pueda ser introducida una palabra clave (keyword), referenciandolo con un * delante:
+            def metodo_con_argumentoskw(x, y='kw_por_defecto', *, a, b=False ):
+                print(x, y, a, b)
+        
+        Siendo una de las llamadas correctas de esta funcion algo como: metodo_con_argumentoskw(x, a='a', b=False).
+
+    En definitiva, se puede pensar en los argumentos de un metodo y discernir entre ellos como una lista ordenada, los argumentos posicionales, y un diccionario, los argumentos keyword. Cabe destacar que los 
+    argumentos keyword es que, cualquiera que proveamos por defecto es evaluado la primera vez que se interpreta la funcion, no cuando se llama, impidiento tener una generacion dinamica de valores 
+    para introducir.
+
+    -Los valores por defecto por si solos no nos permiten sacarle todo el jugo a la sobrecarga de metodos, ya que una cosa que hace habil a Python es la habilidad que nos da de escribir metodos con 
+    argumentos con posiciones arbitrarias o palabras clave sin nombrarlas explicitamente. Tambien nos permite pasar listas y diccionarios arbitrariamente en dichas funciones.
+    Por ejemplo, en el caso de uso del tema anterior, el recolector de enlaces, podriamos haber declarado la funcion de que obtenia los enlaces utilizando este truco.
+    PJ: def obtener_pagina(*links):
+        for link in links:
+            # codigo que recogiese los enlaces
+            # de la obtener_pagina
+
+        Pudiendose llamar de las siguientes maneras: obtener_pagina("https://twitter.com/home"), obtener_pagina("https://twitter.com/home", "https://www.wordreference.com")  
+
+    Tambien podemos recibir keywords arbitrariamente, declarando la variable como un diccionario y acompañando la declaracion de la palabra clave con dos asteriscos (**variable_kw). Esta caracteristica se usa 
+    frequentemente en funciones de configuracion
+
+    Siguiendo el hilo de los argumentos posicionales y keyword, tambien es posible introducir informacion de listas y diccionarios como hemos visto hasta ahora. Si bien es correcto el uso de este tipo de 
+    argumentos, es bastante mas util cuando el contenedor que se introduce se ha rellenado a partir de inputs de usuarios o, en definitiva, una fuente externa al script
+
+    -Los lenguajes de programacion que enfatizan en la programacion orientada a objetos, tienden a "fruncir el ceño" cuando las funciones que se declaran no son metodos, es mas, se espera que se cree una clase 
+    que envuelva al metodo involucrado. Este no es el caso de Python, ya que las funciones SON un objeto.
+
+    Podemos adjuntar atributos alas funciones y podemos pasarlas para que sean llamadas mas tarde, incluso tienen propiedades especiales que pueden ser accedidas directamente. El hecho de que una funcion sea un objeto
+    de alto nivel es usado normalmente, como hemos dicho, para que se llame mas tarde, como por ejemplo cuando se ha dado cierto evento o cierta condicion se ha satisfecho
+
+    -Uno de los efectos interesantes de que las funciones sean objetos es que pueden ser asignadas a atributos de otras funciones, lo que permite añadir o cambiar una funcion 
+    declarada en la instancia de un objeto. 
+
+    Tambien es posible reemplazar el metodo de una definicion de una clase añadiendo "self" como argumento de entrada de la funcion que se desea implementar. Hemos de tener en cuenta que este metodo cambiara en todas y 
+    cada una de las instancia que se creen de ese objeto en concreto. No es recomendable hacer esto de seguido ya que puede ser una pesadilla para debugear el codigo una vez se ha acabado de implementar. Una de las ocasiones 
+    en las que se suele usar este bien llamado "monkey patch" es en el testeo unitario de servicios, como los de una transferencia de dinero o envio de mails a usuarios, en los que nos interesaria cambiar los metodos 
+    que vamos a ejecutar para que no se realice ninguna funcion que pueda afectar a usuarios.
+
+    -Justo como las funciones son objetos que pueden tener atributos adjudicados a ellas, tambien es posible crear un objeto que sea llamado a traves de una funcion. Cualquier funcion puede ser llamada simplemente añadiendole 
+    un metodo __call__() que acepte los argumentos requeridos.
+
+    RESUMEN EJEMPLO TAREA:
+    *Importante: para evitar enviar correos no deseados a direcciones conocidas o errores en el envio a direcciones inexistentes se ha utilizado el comando 'python -m smtpd -n -c DebugginServer localhost:1025'*
+        -Para este caso de uso de lo que hemos aprendido se ha decidido realizar un sistema automatizado de correo en el que se envie mensajes electronicos a las diferentes direcciones que esten guardadas en base a 
+        uno(s) grupos que se introduzcan en la llamada de "enviar_correos_a_todos()" implementada en la clase ListaCorreos.
+
+        Este objeto tiene varias funciones que lo componen, algunas mas complejas que otras. Vamos a ver cuales son:
+            -enviar_correo(): Este metodo es sobre el que se basa toda la funcionalida de este proyecto, es el encargado de enviar, en ultima instancia y despues de haber procesado la informacion disponible, los correos 
+            a las direcciones correspondientes. Se utilizan dos librerias externas al proyecto para dotarla de funcionalidad:
+                -email: de este modulo obtenemos el objeto MIMEText, el cual utilizaremos para guardar la informacion pertinente asignada al correo, tal como el mensaje, la direccion desde la que se envia o 
+                el destinatario
+                -smtplib: de esta libreria obtendremos la funcionalidad de enviar el correo, finalmente, mediante el metodo sendmail().
+            
+            En la llamada a este metodo se introducen varios argumentos importantes para su funcionamiento:
+                -sujeto: este sera el texto que aparezca en el "Acerca de..." del correo
+                -mensaje: este sera el texto que queramos enviar
+                -direccion_desde: este sera el texto que defina la direccion desde la cual se envia el correo electronico
+                -*direccion_hacia: este sera el texto que defina la direccion a la cual esta destinado el mensaje. Esta definido com una keyword para que se puedan 
+                introducir desde una direccion hasta una lista de ellas
+                -host='localhost': este parametro es el que define el servidor SMTP por el cual pasara el correo electronico. En el caso 
+                de ejemplo se usa 'localhost' por que nosotros mismos alojaremos ese servicio para probarlo
+                -port=1025: este parametro define el puerto por el que saldra la informacion 
+                -cabeceras: esta tupla definira la cabecera que tendra el correo electronico. Esta declarada como None por defecto, dando la 
+                libertad al usuario de introducir una o no.
+
+            Se crea un objeto MIMEText con el que se quiere enviar como argumento para el constructor y se asigna a una variable correo, la cual se convertira en un diccionario. Seguidamente modificaremos los indices "Subject" y "From" 
+            con las variables sujeto y direccion_desde para definir el sujeto y la direccion desde donde queremos enviar el correo. A continuacion instanciamos un objeto SMTP de la libreria smtplib con el host y el puerto para el funcionamiento 
+            del servicio. 
+
+            Finalmente se recorre la variable direccion_hacia y se asignan las direcciones a la posicion "To" del objeto MIMEText para, posteriormente realizar la llamada al metodo sendmail especificando las direcciones de origen y destino, ademas 
+            de convertir a str el objeto MIMEText para que este sea el mensaje total del correo a enviar.
+
+            -enviar_correos_a_todos(): Este metodo trabaja haciendo uso de los otros dos metodos direcciones_en_grupo() y enviar_correo(). Hace servir los siguientes parametros de entrada para su funcionamiento:
+                -sujeto: este sera el texto que aparezca en el "Acerca de..." del correo
+                -mensaje: este sera el texto que queramos enviar
+                -direccion_desde: este sera el texto que defina la direccion desde la cual se envia el correo electronico
+                -*grupos: variable/lista de variables que define/n el/los grupo/s a los que se quiere enviar el correo
+                -cabeceras: esta tupla definira la cabecera que tendra el correo electronico. Esta declarada como None por defecto, dando la 
+                libertad al usuario de introducir una o no
+
+            Por un lado, la llamada de direcciones_en_grupo(*grupos) nos aporta todas las direcciones que se ven conectadas al/los grupo/s que se han introducido para ser enviado el mail. Esta/s direccion/es seran las que luego introduzcamos como 
+            argumento en la posterior llamada al metodo enviar_correo().
+
+            -direcciones_en_grupo(): Este metodo recibe un unico argumento de entrada, siendo este un string o una lista de strings que representen los grupos a los que se quiere enviar el correo. El funcionamiento de este metodo es muy sencillo gracias 
+            al uso de los objetos set() y dict().
+
+            Primeramente se declara el set que contendra el/los grupo/s, que ha recibido el metodo, y el set que contendra la/s direccion/es que obtendremos en este metodo. Mediante un bucle for obtendremos las direcciones y los grupos (llaves-valores) 
+            del diccionario declarado en el constructor "mapeo_correos" mediante el metodo de este "items()". En caso de que coincidan los valores del diccionario con el de los grupos se añadira un nuevo valor al contenedor de las direcciones.
+
+            Una vez se haya terminado la iteracion del diccionario se devolvera el set que contenga las direcciones.  
+
+            -guardar_informacion(): Este metodo se ha declarado con el fin de no perder la informacion sobre las direcciones y grupos introducidos por el usuario una vez se borre la memoria cache. Este crea o abre un archivo con el nombre especificado en el 
+            que escribe la informacion acumulada en el diccionario "mapeo_correos". Esta informacion se escribe con un formato de texto en concreto pensado para evitar fallos e incompatibilidades.
+
+            -cargar_informacion(): Este metodo se ha declarado con el unico objetivo de recabar la informacion que se encuentre escrita en el archivo que contenga las direcciones y los grupos. Se ha usado la siguiente libreria ajena al proyecto:
+                -contextlib: de esta libreria se ha obtenido el objeto suppress, el cual nos ayudara a manejar las excepciones que ocurran mientras estemos procesando el archivo de texto con la informacion.
+
+            Para el funcionamiento de este metodo se reinstancia el diccionario mapeo_correos, por si quedaba informacion residual de la anterior carga, para continuar con una instancia de suppress en la que especificamos IOError, para recoger un error con 
+            un archivo I/O y continuar abriendo el archivo con la informacion.
+
+            Una vez abierto el archivo, se lee por completo, eliminando y dividiendo por los espacios en blanco. Una vez obtenemos toda la informacion, se introduce los str de los grupos en una variable mediante la separacion por coma debido a nuestro formato 
+            de texto, y, finalmente, se añade como llave la direccion y como valor los grupos
+
+            -anyadir_a_grupo(): Este metodo añade un grupo, especificado mediante el argumento "grupo", al indice que coincida con el que correo que se haya introducido
+
+            -__enter__() y __exit__(): Estos dos metodos privados se han sobreescrito para mejorar la calidad de vida de la clase, haciendo que, cuando se instancie un objeto de esta dentro de la sintaxis "with" y se llamen a estos, cargue y guarde la informacion 
+            automaticamente y asi no tenga que preocuparse el desarrollador
