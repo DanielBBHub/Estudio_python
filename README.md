@@ -21,8 +21,11 @@ Los dos primeros capitulos de este repositorio son:
   
   -Sistema de autenticacion y autorizacion de usuarios  
   
-  -Modificacion de archivos (texto e imagenes) y creacion de un ejemplo de jugete de
-  un editor de texto sin interfaz  
+  -Modificacion de archivos (texto e imagenes) que se encuentran dentro de un archivo  
+  comprimido zip y creacion de un ejemplo de jugete de un editor de texto sin interfaz  
   
   -Recolector de enlaces de paginas web  
+    
+  -Servicio de correo automatizado, basado en direcciones de correo electronico asociadas  
+  a grupos
   
