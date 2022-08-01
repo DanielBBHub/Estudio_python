@@ -24,8 +24,10 @@ Los dos primeros capítulos de este repositorio son:
   -Modificación de archivos (texto e imagenes) que se encuentran dentro de un archivo  
   comprimido zip y creación de un ejemplo de jugete de un editor de texto sin interfaz  
   
-  -Recolector de enlaces de paginas web  
+  -Recolector de enlaces de paginas web    
     
   -Servicio de correo automatizado, basado en direcciones de correo electronico asociadas  
-  a grupos
+  a grupos  
+    
+  -Generacion dinamica de archivos HTML en base a una plantilla
   
