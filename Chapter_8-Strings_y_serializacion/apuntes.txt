@@ -1,0 +1,190 @@
+Puntos importantes sobre strings y serializacion:
+    -Antes de comenzar a explorar los patrones de diseño haremos una extensa parada en el objeto mas comun de los lenguajes de programacion: el string
+    Veremos que hay mas cosas de las que el ojo ve, y cubriremos la busqueda de strings para patrones y serializacion de informacion para su almacenamiento 
+    y transmision
+
+    En Python, en concreto, podemos definir los strings como una sequencia de caracteres Unicode (estandar de definicion de caracteres) inmutables.
+
+    -Como sabemos, los strings peuden crearse envolviendo una secuencia de caracteres con las comillas, ya sean dobles o simples, o incluso triples para 
+    crear strings multilinea. Tambien es posible concatenar diferentes strings con el operador matematico +.
+    *Esto ultimo puede inducir a bugs pero es extremadamente util cuando necesitas saltarte la recomendacion de 79 caracteres de longitud de linea*
+
+    Por otro lado, como cualquier otra sequencia, los strings pueden ser iterados, indexados, cortados o concatenados, con la misma sintaxis que las listas.
+    Usando varias conveniencias de los booleanos, Python es capaz de averiguar ciertos patrones en estos objetos, dandonos metodos como los siguientes:
+        -isalpha(): devuelve True si el caracter o caracteres de un string pertenecen al alfabeto (a-z)
+        -isupper/islower(): devuelve True si el caracter o caracteres de un string estan en minusculas/mayusculas
+        -startswith/endswith(): devuelve True si un string empieza/acaba con dicho caracter/es
+        -isspace(): devuelve True si el indice en concreto de un string es un espacio
+        -istitle(): devuelve True si el primer caracter de un string esta en mayusculas y el resto en minusculas
+        -isdigit/isdecimal/isnumeric(): devuelve True si el caracter es un digito/decimal/numero
+        *este ultimo puede no ser veridico al 100% ya que el punto(.) que usamos para denotar un float para una variable no lo convierte en numero, es mas
+        en Python se denota con el siguiente caracter: /0660x
+
+    Hay varios metodos que no devuelven booleanos que son utiles para hacer busquedas de patrones:
+        -count(): devuelve el numero de veces que aparece un string en concreto en un string
+        -find/index/rfind/rindex(): devuelve el indice en el que se encuentra elstring provisto dentro del string original
+        *en este ultimo, aquellos que comienzan con r, empiezan a buscar desde el final del string, el metodo find() devuelve -1 si no se encuentra el substring
+        dentro del original y, finalmente, index levanta una excepcion ValueError en la misma situacion*
+
+    El resto de metodos de los strings devuelven una transformacion de estos:
+        -upper(): devuelve el string originial transformando todos sus caracteres a mayusculas
+        -lower(): devuelve el string originial transformando todos sus caracteres a minusculas
+        -capitalize(): devuelve el string originial transformando, donde la primera letra del string es mayuscula, y el resto minusculas
+        -title(): devuelve el string originial transformando, donde la primera letra de cada string es mayuscula, y el resto minusculas
+        -translate(): este metodo puede tuilizar un diccionario para mapear entradas arbitrarias a una salida especificada de caracteres
+        *como estos metodos devuelven una nueva instancia de la clase str, es recomendable reasignar el valor devuelto por estos a la variable original, 
+        pj: valor = valor.lower()*
+
+    Finalmente, algunos de los metodos devuelven u operan en lsitas:
+        -rsplit/split(): aceptando un substring como argumento, separa un string en una lista a partir del substring proporcionado. Se puede especificar, con un segundo 
+        argumento, el limite de separaciones que se desea hacer. El metodo comenzado en r empezara el separado desde el final del string provisto
+        -rpartition/partition(): separan el string, unicamente, en la ultima o primera vez que aparece el substring que se ha introducido como argumento, devolviendo 
+        una tupla con tres valores (caracteres antes del substring, el substring, caracteres despues del substring)
+        -join(): acepta una lista de strings y devuelve una combinacion de estas poniendo el original entre el resto
+        -replace(): en base a dos argumentos, devuelve un string en el que cada instancia del primer argumento ha sido reemplazada por el segundo
+
+    -Python3 tiene una poderosa forma de formatear y mecanismos de hacer plantillas para strings, que nos permiten formar strings compuestos de texto hardcodeado y variables 
+    intercaladas.
+
+    Por un lado, podemos formatear un string (f-string) precediendo a este con una f (f"hola mundo"). Si este string contiene {}, podemos utilizarlas para incluir variables 
+    que rodeen este string. 
+    
+    Estos caracteres entre llaves normalmente son utiles en strings, ademas del formateo. Necesitamos una forma de escapar de estos en situaciones que queremos representarlos
+    a ellos solos, en vez de que los reemplazemos. Podemos conseguir nuestro proposito si doblamos las llaves.
+
+    Pero no tenemos por que quedarnos aqui, cualquier primitivo (int, float, ...) e incluso algunas mas complejas (listas, tuplas, objetos, ...) pueden ser introducidos en los 
+    f-strings, pudiendo acceder a sus indices y variables o incluso llamar funciones en estos objetos, todo dentro del string formateado. Generalmente, cualquier codigo que esperes 
+    que devuelva un string, o un valor que pueda ser convertido a string, puede ser ejecutado dentro de un string formateado(f-string). Puedes incluso ejecutar comprehension dentro 
+    de estos formateos
+
+    -Si bien, los formateadores que hemos visto son los "built-in", es posible que otros objetos definan especificadores no-estandar. PJ: si pasamos un objeto datetime en un format, 
+    podemos utilizar datetime.strftime(). Otra opcion es crear formaters para tus objetos personalizados, algo que se nos escapa para esta incursion en Python (se haria sobrecargando 
+    el metodo __format__() de tu objeto)
+
+    -El metodo format() funciona de manera similar a los f-strings, con solo un par de diferencias:
+        -Es mas restrictivo en las cosas que puedes consultar dentro de esta (no puedes hacer llamadas a funciones)
+        -Puedes usar enteros para acceder los argumentos posicionales, aun que si los introduces en orden es opcional
+
+    -Al principio de esta explicacion, hemos definido los strings como una secuencia de caracteres Unicode inmutable. Ya que Unicode no es un formato de almacenamiento, si no un estandar 
+    de definiciond de caracteres, en el caso de leer informacion de un archivo, esta informacion estara en forma de bytes (ya sea texto o pixels de una imagen)
+
+    Si representamos este objeto bytes, cualquier byte que este mapeado a ASCII sera escrito como el caracter original, mientras que si esto no ocurre, sera escrito como una secuencia 
+    hexadecimal. 
+    
+    Ya que muchos operadores I/O trabajan con bytes, aun que estos representen texto, es necesario saber convertirlos a Unicode. Sabiendo que los bytes son el formato que utilizan las maquinas 
+    y el texto el que utilizamos nosotros, se necesita de un encoder que transforme de uno a otro. El problema es que hay muchas formas de mapear bytes a Unicode, habiendo muchas sequencias de 
+    bytes que significan cosas diferentes dependiendo del encoder que se utilice. Asi que, es importante decodificar la informacion con el mismo encoder que se utilizo para guardar la informacion 
+    en el archivo que se lea
+
+    -En el caso de tener una secuencia de bytes podemos decodificarla con el metodo, del objeto byte, decode(), especificando que decoder queremos utilizar (como ASCII, UTF-8 o latin-1 para nuestras
+    lenguas occidentales). Por otro lado, existe el metodo de la clase str encode() el cual hace el trabajo inverso, en este tambien hemos de especificar cual encoder es el que queremos utilizar para 
+    la tarea en cuestion. En el caso de no querer especificar ningun tipo de decoder/encoder en estos metodos, en la ejecucion se escogera el que este definido por defecto en la plataforma. Esto dependera 
+    de SO y de la configuracion local y regional 
+    *Puede comprobarse utilizando sys.getdefaultencoder()*
+
+    -El tipo bytes, al igual que str, es inmutable, permitiendonos acceder por indice y notacion de corte ( PJ:[:n] ) para buscar una secuencia de bytes en especifico, pero no nos permite modificarlo, lo 
+    cual es inconveniente cuando trabajamos con I/O (cualquier operacion que se hace hacia o desde una maquina). A proposito de esto tenemos el tipo bytearray, siendo parecido a una lista,el cual puede 
+    recibir un byte en el constructor y nos permite adjuntar bytes con el metodo extend().
+
+    Si queremos manipular un unico elemento en este objeto, tenemos que pasar un entero [0:255]. Este valor representa un patron especifico de bytes. Si intentamos pasar un objeto bytes se levantara una 
+    opcion. Para convertir un unico caracter byte a entero se puede usar el la funcion ord(), la cual devuelve la representacion entera de este byte. Tambien aporta varios metodos similares a los de los 
+    str para trabajar con este objeto, como count() y find()
+
+    -Hay una tarea en concreto bastante dificil usando los principios orientados a objetos: diseccionar sintacticamente un string (parsear un string). Si es verdad que hay varios papers academicos intentando 
+    darle una solucion, el resultado siempre acaba siendo bastante extendo y dificil de leer.
+
+    En la aplicacion practica, la mayor parte de los lenguajes tratan de hacerlo mediante las expresiones regulares (REGEX). Es una solucion concisa, con la que se busca encontrar patrones, pero compleja de leer.
+    Aun que las REGEX no fueron diseñadas orientadas a objetos, la implementacion en Python viene acompañada de clases y metodos que pueden usar para construirlas y ejecutarlas (libreria "re").
+
+    Como ya hemos hablado, estas expresiones se usan para resolver un problema comun: Dado un string, determinar si este coincide con algun patron y, opcionalmente, recoger substrings que 
+    esten contenidos dentro con informacion relevante. 
+    
+    Para la busqueda de coincidencias utilizamos un string a modo patron, con el que haremos la comprobacion, y un string en el que buscar. 
+        -En caso de que necesites recoger los objetos del principio o final de una linea, tanto asi como comprobar que no haya saltos de linea en el string, o al inicio o final de este, 
+        podemos usar los caracteres ^ y $ al principio y final del patron respectivamente. 
+        -Por otro lado, el punto (.), dentro de un patron REGEX, puede coincidir con cualquier caracter que se presente
+        -En el caso de que busquemos unos caracteres en especifico, podemos introducirlos entre [] (PJ: [abc]). Es "case sensitive".
+        -Ampliando el punto anterior, para abarcar muchos caracteres podemos introducir un - entre el primero y el ultimo de ellos (PJ: [a-z])
+        -Si por un casual queremos buscar numeros decimales, ya que el punto coincidira con cualquier caracter, debemos añadirle una \ (PJ: 0\.[0-9])
+        -La \ se puede usar, tambien, si no queremos empezar una "caracter class" (PJ: \[a-x] ) e incluso para representar saltos de linea \n, tabs \tabs, espacios \s,
+        digitos \d y letras, numeros y barrasbajas \w
+        -El asterisco * expresa que el caracter anterior puede coincidir cero o mas veces. Es util cuando no sabemos la cantidad de caracteres que debemos emparejar en un patron, asi 
+        que nos permite modificarlo adjuntantolo para que coincidan multiples caracteres
+        -Similar al asterisco, el operador + representa que el patron puede repetirse una o mas veces, pero a diferencia de *, este no es opcional
+        -Por otro lado tenemos ?, el cual se asegura de que el patron no aparezca o solo aparezca una vez en el string.
+        -Los () nos permiten formar nuestros patrones con secuencias de caracteres (capturar y agrupar secuencias como argumentos)
+
+    -Vamos a concentrarnos en la parte de Python, ya que las REGEX son lo mas alejado a OOP que veremos. Sin embargo, el modulo re provee una interfaz orientada a objetos para 
+    entrar al engranaje de las expresiones regulares. Hemos estado comprobando si habia emparejamientos en el metodo match() que, en el caso de que coincida el patron, devuelve un 
+    objeto util que nos aporta informacion.
+
+    Hasta ahora las expresiones regulares han respondido a las preguntas como: ¿Se puede emparejar este string con este patron?, mientras que una mas interesante seria: ¿Si este patron 
+    coincide, que valor relevante tiene el substring?. Si usamos grupos para identigiccar partes del patron que quieres referenciar luego, puedes obtenerlos 
+    fuera del resultado del emparejamiento.
+
+    Esta funcionalidad se puede conseguir recogiendo la informacion que quieres obtener entre parentesis (PJ: "^([a-zA-Z.]+)@([a-z.]*\.[a-z]+)$", el cual nos aporta el nombre y el dominio
+    de un correo electronico) y llamando al metodo groups, en el objeto devuelto por el metodo match(), que devuelve una tupla con las partes del string que se han extraido. Ademas de esta funcion, 
+    el modulo re nos presenta otras dos funciones interesantes.
+
+    El metodo search() nos devuelve la primera instancia en la que coincide el patron, sin tener en cuenta las restricciones de que el patron debe empezar en la primera letra del string. Por otro lado 
+    tenemos el metodo findall(), que tiene una funcionalidad similar a search() pero, en este caso, no se detiene solo con el primer emparejamiento. Este devolvera, a veces, una lista de strings y, otras 
+    veces, una tupla:
+        -Si no hay grupos dentro del patron, se devolvera una lista de strings, cuyos valores corresponden a un substring del string original con el que haya coincidido el patron
+        -Si hay exactamente un grupo, este devolvera una lista de strings cuyos valores son los contenidos de ese grupo
+        -Si hay multiples grupos, se devolvera una lista de tuplas que contengan valores para cada grupo que coincida, en orden. 
+
+    -Cada vez que se va a comprobar un patron en un string, la maquina tiene que crear una estructura interna que haga de buscar strings una tarea rapida, lo cual lleva un tiempo considerable. Si encima metemos 
+    esta expresion regular dentro de un bucle sera aun peor. En este momento es cuando entra en escena el metodo compile(), que nos permite precompilar la expresion regular, la cual sera devuelta como un objeto 
+    con los metodos que usaremos ya implementados.
+
+    -Todos los OS tienen un "filesystem", una manera de mappear la logica abstraccion de los directorios y archivos a bytes que se almacenen en un HDD, por ejemplo. Aun que como usuarios podemos interactuar con este 
+    sistema con un mecanismo de arrastrar-soltar, como programadores tenemos que trabajar con el mediante unas llamadas a funciones del sistema (Python implementa un modulo, os.path para trabajar con una interfaz).
+    Si es cierto que introducir paths en una consola, aun que puede llegar a ser tedioso, es relativamente sencillo, con el modulo os se puede volver completamente ilegible el codigo y perder
+    el hilo del path que estas definiendo, por esto se creo pathlib.
+
+    El objeto Path del modulo pathlib nos ofrece varios metodos que cubren casi todo lo que quieras hacer con un camino de directorios:
+        -absolute(): devuelve el path completo, desde la raiz hasta donde se encuentra actualmente
+        -parent: devuelve un path directo al padre 
+        -exists(): comprueba si un path existe 
+        -mkdir(): crea un directorio en el path actual (recibe booleanos de parents y exists_ok como argumentos para definir si se crean directorios 
+        recursivamente y si se ha de levantar una expcepcion en el caso de que ya exista un directorio)
+
+    La mayoria de librerias estandar que trabajen con strings indicando caminos son compatibles con el objeto Path.
+
+    -Actualmente tomamos la habilidad de escribir y leer informacion de archivos por garantizada. Por muy conveniente que esto siea tendemos a convertir informacion que estaba almacenada en un objeto
+    o patron de diseño y la volvamos en otro objeto de formato de texto o binario para guardarla.
+
+    El modulo pickle de Python nos habilita una forma, orientada a objetos, de guardar la informacion en un objeto. Basicamente convierte un objeto en una secuencia de bytes, preparada para ser distribuida. El objeto que 
+    creamos nos permite, en base a cuatro funciones basicas, manipular objetos-archivo y objetos-bytes:
+        -dump(): nos permite escribir un objeto como secuencia de bytes en un archivo que especifiquemos
+        -load(): hace exactamente lo contraria al metodo anterior, serializa un archivo para guardar su informacion en una variable
+
+    Estas dos funciones son bastante parecidas a las de los objetos-archivo, a pesar de que las de la libreria pickle aceptan o devuelven secuencias de bytes, en vez de objetos-archivo. EXisten a su vez los metodos dumps() y loads(),
+    los cuales devuelven, como su nombre indica con la s final, strings (son definiciones de una epoca en la que se trabajaba con strings y no bytes).
+
+    -Como la mayoria de objetos en Python, pickle "simplemente funciona". Cualquier forma primitiva (int, str, float, ...) puede ser "pickleada", como tambien lo pueden ser los contentedores (lista, dict, ...)
+    Es decir, cualquier objeto, mientras sus metodos puedan ser "pickeables", es "pickleable".
+
+    ¿Que es lo que hace a un atributo "pickleable"? Tiene que ver con los metodos "sensibles al tiempo", en otras palabras aquellos que tengan un sentido poder llamar en el futuro. (PJ: si tenemos una conexion a una BD,
+    no tendria sentido serializarla por que puede que no exista el estado del sistema operativo cuando lo querramos volver a invocar)
+
+    En cuanto a la serializacion de objetos Web, no es muy buena idea cargar un objeto pickle de una fuente desconocida o sin confianza, ya que es posible injectar codigo dentro 
+    de estos. Otro contra de este tipo de objetos es que son unicos de Python y se hace dificil compartirlos con el resto de lenguajes. Dicho esto, hay varios formatos para este mismo fin:
+        -XML(Extensible Markup Lenguaje)
+        -YAML(Yet Another Markup Lenguaje)
+        *Los dos anteriores es interesante investigarlos por los fallos de seguridad potenciales que aportan*
+        -CSV(Comma-Separated Value)
+        -JSON(JavaScript Object Notation)
+
+    Con lo visto y sabiendo que JSON es el formato de serializacion mas seguro y mas potente en JavaScript, en el caso de que queramos utilizar informacion de una web en un script de Python 
+    deberemos tener una herramienta que convierta esta informacion. Predeciblemente, existe la libreria json para Python, que aporta una interfaz parecida a la del modulo pickle (con dump, load,
+    dumps y loads). JSON tiene una diferencia clave, siendo que la salida de estas funciones es notacion JSON valida, ademas de que las funciones de este trabajan sobre str.
+
+    El serializador de json no es tan robusto como el de pickle, ya que unicamente puede convertir tipos primitivos y contenedores simples, teniendo cada uno de estos un mappeo directo 
+    al JSON. En el caso de tener objetos con informacion que queramos serializar, siempre la podemos convertir con la llamada a __dict__()
+
+    En el modulo json, ambas opciones, tando la de cargar como la de guardar, aceptan argumentos opcionales para alterar el funcionamiento:
+        -dump/dumps(): aceptan un argumento keyword definido como cls, esto cambiaria el serializador por el de una subclase, con el metodo default sobreescrito
+        creando un diccionario que pueda digerir json
+        -load/loads(): estos metodos tambien aceptan la keyword cls, aun que normalmente es suficiente pasarle una funcion usando el object_hook como argumento para formatear, 
+        en el caso de tenerlo, un tipo de datos propio
