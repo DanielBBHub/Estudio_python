@@ -29,5 +29,6 @@ Los dos primeros capítulos de este repositorio son:
   -Servicio de correo automatizado, basado en direcciones de correo electronico asociadas  
   a grupos  
     
-  -Generacion dinamica de archivos HTML en base a una plantilla
-  
+  -Generacion dinamica de archivos HTML en base a una plantilla  
+    
+  -Asignacion de nombres a colores en base al algoritmo de machine learning k-nearest 
