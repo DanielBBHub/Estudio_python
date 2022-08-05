@@ -1,0 +1,15 @@
+    @En este capitulo discturiemos como el bucle for, que parece tan estructurado, es un envoltorio ligero para un conjunto 
+    @Los patrones de diseño son un intento para traer una definicion formal de las estructuras de software que se reconocen como correctas.
+    @En jerga de diseño de patrones, un iterador es un objeto con un metodo next() y un metodo done() (este ultimo devuelve true cuando no hay mas 
+    @La "comprehension" es una sintaxis sencilla pero potente para transformar o filtrar objetos iterables. El resultado de este proceso puede ser una lista,
+    con el resultado, hemos de acotar la relacion llave@valor mediante los :.
+    (PJ: libros_de_fantasia = {libro.autor for libro in libros if libro.genero == "fantasia"} @> set
+    libros_de_fantasia = {libro.autor: (libro.titulo, libro.genero) for libro in libros if libro.genero == "fantasia"} @> dict)
+    @A veces queremos procesar una secuencia sin crear una lista, set o diccionario nuevo y añadirla a la memoria del sistema, ya que podemos, por ejemplo, estar iterando 
+    @Los generadores son parecidos a los comprehension tambien; comprimen la sintaxis generadora avanzada en una sola linea. Estos generadores se basan en la sintaxis "yield" para 
+    __next__() de los iteradores para trabajar (se puede comprobar de la siguiente manera print(cambiar_guiones([])) @> <generator object cambiar_guiones at 0x000001B69F212110> o 
+    @A veces, cuando implementamos una funcion generadora, acabamos en una situacion donde queremos "yieldear" informacion de otro iterable, lo cual se hacia, hasta Python3.3, metiendo en 
+    @Las corrutinas son un constructo muy poderoso confundido comunmente con los generadores. Estas son dificiles de entender y, fuera de la concurrencia, no se usan mucho. Este concepto tiene 
+        @yield: yield es la sintaxis que nos ayudara a hacer la tarea paso por paso. Servira tambien para poder introducir valores ajenos a la funcion a variables dentro de esta.
+        @next(): utilizaremos la funcion next() para inicializar los objetos que creemos para las corrutinas
+        @send(): utilizaremos este metodo para introducir valores ajenos a la funcion mediante el yield

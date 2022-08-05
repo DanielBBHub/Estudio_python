@@ -1,0 +1,3 @@
+Numero de serie de dispositivo defectuoso:
+WW11111
+ZZ12345

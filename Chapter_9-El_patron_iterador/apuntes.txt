@@ -1,0 +1,81 @@
+Puntos importantes sobre el patron iterador:
+    -En este capitulo discturiemos como el bucle for, que parece tan estructurado, es un envoltorio ligero para un conjunto 
+    de conceptos orientados a objetos. Ademas veremos una variedad de extensiones de esta sintaxis que crearan, automaticamente mas tipos 
+    de objetos.
+
+    -Los patrones de diseño son un intento para traer una definicion formal de las estructuras de software que se reconocen como correctas.
+    Hay muchos diseños diferentes para resolver varios problemas comunes. Tipicamente, los patrones de diseño ayudan al desarrollador a 
+    enfrentarse a un problema comun en situaciones especificas. En resumidas cuentas, es una recomendacion para una solucion de un problema ideal 
+    tratando de aplicar conceptos de OOP
+
+    Dicho esto, puede que en el desarrollo de software, al usar un patron de diseño para desarrollar la solucion, este programa colapse en 
+    situaciones normales o cuando es forzado mas alla de lo que en un principio se diseño. Para sacar provecho a un patron de diseño, el ingeniero 
+    ha de reconocer el problema y enlazarlo con un patron, para despues escribir y adaptar ese patron para el problema en cuestion.
+
+    En este caso cubriremos el patron iterador, el cual es tan potente que se le ha definido varias maneras de acceder a los principios orientados 
+    a objetos que se esconden en este patron.
+
+    -En jerga de diseño de patrones, un iterador es un objeto con un metodo next() y un metodo done() (este ultimo devuelve true cuando no hay mas 
+    objetos en la secuencia). En Python, la iteracion es una caracteristica especial, con lo que el metodo recibe un nombre especial, __next__().
+    Por otro lado, en vez de tener un metodo done() para acabar el iterador, este levanta una excepcion StopIterator.
+
+    La ABC (abstract base class) define el protocolo iterador en Python. Debe albergar una definicion de __next__() para que las caracteristicas que 
+    soporten iteracion. Por otra parte, todos los iteradores deben rellenar la interfaz Iterable (cualquier interfaz que implemente un metodo __iter__() 
+    es un objeto iterable, eso si, debera devolver una instancia Iterable que cubra todos los elementos de la clase).
+
+    Para resumir, el objeto iterable es aquel que contiene elementos que se pueden introducir en un bucle, mientras que el objeto iterador es aquel que 
+    representa una posicion en especifica en el iterable en cuestion (pueden haber dos iteradores distintos en un iterable, pero no pueden coincidir en la
+    posicion dentro de este). Cada vez que se llama a next(iterador), esta devuelve otro token del iterable, en orden, hasta que no queden mas items y 
+    se levante la expcepcion StopIterator
+
+    -La "comprehension" es una sintaxis sencilla pero potente para transformar o filtrar objetos iterables. El resultado de este proceso puede ser una lista,
+    un set o incluso un diccionario o puede ser una expresion generadora que puede ser consumida eficientemente mientras se mantiene un elemento en memoria.
+    La "comprehension" de listas son una de las herramientas mas poderosas, que no avanzadas. Es por esto que, debido a su sintaxis facil de leer y su potencia de 
+    procesado es que se usan tanto (a lo largo de los diferentes capitulos hemos utilizado algun que otro ejemplo de esto)
+
+    Aun que suene complicado, la comprehension no es mas que un par de conceptos entreligados para iterar objetos. Primero, los claudators representan la creacion 
+    de una lista, como el resto de veces que hemos usado esta estructura de datos, que ademas tiene un bucle for (mas concretamente un for... each en la practica)
+    dentro procesando los objetos que se especifican (OJ: [int(num) for num in string_nums], en esta expresion se procesan todos los "num" que haya dentro del iterable
+    "string_nums", para despues castearlos de str a int y colocarlos en una lista. Como ya hemos dicho, transforma objetos obtenidos de uno iterable)
+
+    Este concepto, que viene de un codigo altamente optimizado en C, es mas rapido que procesar los objetos en un bucle for. Ademas de la sintaxis for que hemos visto, 
+    tambien pueden declararse condiciones (if) para los objetos que se tratan (el filtrado del que hablabamos antes). En definitiva, la comprehension en listas sirve
+    para mapear valores de entrada con valores de salida, a los cuales podemos aplicarle algun tipo de filtro o conversion
+
+    Por otro lado, cualquier iterable puede ser el input de un comprehension, es decir, cualquier objeto que se pueda introducir en un bucle for.
+
+    Los comprehension no se limitan unicamente a las listas, tambien puede usarse en set() y dict(). Para esto hemos de acotar la expresion del comprehension entre {}.
+    Para diferenciar el contenedor en el que volcaremos la informacion, podemos dividirla con :. Con esto queremos decir que en la expresion, si se quiere crear un dict()
+    con el resultado, hemos de acotar la relacion llave-valor mediante los :.
+    (PJ: libros_de_fantasia = {libro.autor for libro in libros if libro.genero == "fantasia"} -> set
+    libros_de_fantasia = {libro.autor: (libro.titulo, libro.genero) for libro in libros if libro.genero == "fantasia"} -> dict)
+
+    -A veces queremos procesar una secuencia sin crear una lista, set o diccionario nuevo y añadirla a la memoria del sistema, ya que podemos, por ejemplo, estar iterando 
+    los objetos uno por uno. Cuando procesamos de esta manera un objeto solo necesitamos el espacio de memoria para dicho objeto, pero cuando lo pretendemos meter en una lista
+    todos han de estar cargados dentro de ella antes, si quiera, de empezar a procesarlos.
+
+    En este caso es donde brillan las expresiones generadoras. Estan usan la misma sintaxis que la comprehension, pero sin crear el contenedor final. Lo que tenemos que hacer es 
+    envolver la expresion del comprehension entre (), en vez de [] o {}. Para acabar, deberiamos usar las expresiones generadoras cuando podamos, cada vez que no tengamos que guardar 
+    el resultado en ningun contenedor.
+
+    -Los generadores son parecidos a los comprehension tambien; comprimen la sintaxis generadora avanzada en una sola linea. Estos generadores se basan en la sintaxis "yield" para 
+    procesar los items. El funcionamiento de yield es parecido al de return, ya que devuelven una instancia de un objeto, el que sea, pero al contrario que el return, cuando se vuelva
+    a llamar a esta funcion, se seguira desde el punto en el que se dejo. Esta hace que Python envuelva la funcion en la que aparece en un objeto, por eso es capaz de utilizar la funcion 
+    __next__() de los iteradores para trabajar (se puede comprobar de la siguiente manera print(cambiar_guiones([])) -> <generator object cambiar_guiones at 0x000001B69F212110> o 
+    escribiendo print(dir(cambiar_guiones([]))) para ver cuales son los metodos del objeto que devuelve yield).
+
+    -A veces, cuando implementamos una funcion generadora, acabamos en una situacion donde queremos "yieldear" informacion de otro iterable, lo cual se hacia, hasta Python3.3, metiendo en 
+    un bucle al iterable y usando yield en cada objeto. A partir de la version 3.3 se introdujo una nueva sintaxis que simplifico el proceso, el yield from llamando recursivamente a una funcion.
+    La sintaxis de yield from es un atajo muy uitli cuando se pretende encadenar generadores. Se implemento por un motivo diferente: para soportar corrutinas. Aun que ahora esta cayendo en 
+    el desuso por culpa de las sintaxis await y async.
+
+    -Las corrutinas son un constructo muy poderoso confundido comunmente con los generadores. Estas son dificiles de entender y, fuera de la concurrencia, no se usan mucho. Este concepto tiene 
+    tres puntos clave:
+        -yield: yield es la sintaxis que nos ayudara a hacer la tarea paso por paso. Servira tambien para poder introducir valores ajenos a la funcion a variables dentro de esta.
+        -next(): utilizaremos la funcion next() para inicializar los objetos que creemos para las corrutinas
+        -send(): utilizaremos este metodo para introducir valores ajenos a la funcion mediante el yield
+
+    Una vez creados los objetos de la corrutina, primero hemos de "inicializarlos", para lo cual llamaremos a la funcion next(), que ejecutara la funcion/objeto hasta que se tope con el yield y 
+    se pondra a "dormir". Cuando se decida se llamara al metodo send() con la informacion pertinente para la rutina, volviendo a activar el objeto, que ejecutara linea por linea el codigo hasta 
+    toparse con yield otra vez. Es importante anotar que una vez se llama al send() no solo se agrega el valor que se ha introducido, si no que tambie se devuelve el valor de la ultima llamada a send(), 
+    siendo esta la gran diferencia entre generadores y corrutinas.
