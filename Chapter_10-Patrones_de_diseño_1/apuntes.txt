@@ -1,0 +1,160 @@
+Puntos importantes sobre patrones de diseño:
+    -El patron decorador nos permite envolver un objeto que provee funcionalidades centrales con otros objetos que alteran 
+    su funcionamiento. Cualquier objeto que use el objeto decorado, interactuara con el de la misma manera que lo haria con 
+    cualquier otro objeto.
+
+    Hay dos usos primarios para dicho patron:
+        -Mejorar la respuesta de un componente mientras este envia informacion a otro
+        -Soportar multiples comportamientos opcionales
+    
+    El segundo uso es, a menudo, uno que se le pueda dar a la herencia multiple. Creas un objeto nucleo y, luego, uno decorado 
+    a su alrededor. Ya que ambos objetos tienen una interfaz identica, podriamos incluso crear un segundo objeto decorador.
+
+    Como podemos ver en Diagramas\Diagrama_patron_decorado, el objeto nucleo y los decoradores implementan una interfaz en comun.
+    Los decoradores mantienen una referencia a las otras instancias de la interfaz mediante la composicion. Cuando se le llama, el
+    objeto decorado hace un procesamiento extra antes, o despues, de llamar a la interfaz que lo envuelve. El objeto al que envuelve 
+    puede ser otro decorador o el objeto nucleo.
+    *Para utilizar funcionalidad_central.py hemos de ejecutar el script en una consola y, despues, cliente.py en otra diferente*
+
+    El archivo log_decorador.py decora el objeto socket y presenta la interfaz (send() y close()) a los sockets clientes Un decorador 
+    mas completo cubriria el resto de metodos del socket. Cuando se llame a la funcion send en funcionalidad_central.py, escribe por pantalla 
+    la salida antes de enviarla al cliente usando el socket original.
+    *Tambien podriamos haber sobreescrito el metodo send del objeto socket para cambiar la funcionalidad del metodo send*
+
+    Cuando nos enfrentemos a elegir entre decoradores y herencias, solo deberemos utilizar decoradores en el caso de que necesitemos 
+    modificar nuestro objeto de manera dinamica, dependiendo de alguna condicion (PJ: puede que necesitemos unicamente el LogDecorador 
+    si el servidor esta en modo debug). Los decoradores tambien ganan a la herencia multiple si existen varios comportamientos opcionales.
+
+    El patron decorador es util en Python, pero no debemos olvidar que podrian haber otras opciones, como hacer monkey-patching (socket.socket.send = log_send),
+    herencia unica, donde los calculos optimos se hacen en un metodo enorme o incluso herencia multiple.
+
+    Es bastante comun hacer decoradores de funciones (como vimos, las funciones tambien son objetos), tan comun que Python integro una sintaxis para 
+    su uso. En el ejemplo que hemos escrito en funciones_decoradas.py, tenemos una funcion, llamadas_log(), la cual:
+    -Crea una funcion que hara trabajo extra 
+    -llamadas_log() recibe una funcion como parametro y crea otra dentro de ella (envoltorio), con la cual calculamos el tiempo que tarda en 
+    ejecutarse la funcion que hemos pasado
+    -Por ultimo devolvemos el objeto que hemos creado
+
+    Las tres funciones de prueba del archivo main.py (test1-2-3) nos han servido para demostrar el patron decorador. Pasamos cada funcion al decorador, el cual 
+    devuelve una nueva. Esta ultima se asigna a la variable original, reemplazando en la practica a la funcion original con una decorada.
+
+    Esta sintaxis nos permite construir funciones decoradas dinamicamente, como en el ejemplo del socket. Podemos incluso conservar variaciones decoradas, y no 
+    decoradas, del mismo objeto para diferentes situaciones
+
+    -El patron observador es una buena herramienta para monitorizar estados y encargarse de situaciones mediante eventos. Este patron permite a un objeto ser 
+    monitorizado por un grupo desconocido y dinamico de objetos "observadores".
+    *Podemos observar la dinamica del patron en el diagrama: Diagrama_patron_observador*
+
+    Cada vez que una variable cambia su valor, se comunica el cambio a todos los objetos observadores, llamando al metodo update(). Puede que cada uno de los observadores 
+    tengan una funcionalidad en concreto asignada. Es importante destacar que ni el nucleo, ni los observadores, tienen en cuenta la funcionalidad de los otros observadores.
+    El concepto del patron de diseño es que podemos añadir diferentes observadores para tener una copia de seguridad de un archivo, BD o una aplicacion de internet, todo a la 
+    vez.
+
+    El patron en cuestion separa el codigo observado del codigo que observa. En caso contrario se deberia de haber puesto el codigo del objeto que observa dentro de las propiedades 
+    de la clase inventario, lo cual a la larga, puede ser un problema para mantener el codigo y monitorizarlo 
+
+    -El patron estrategia es una demostracion comun de la abstraccion en la programacion orientada a objetos. El patron implementa diferentes soluiciones a un solo problema, cada 
+    uno en objetos diferentes. El codigo del cliente puede elegir entre estas soluciones la aplicacion mas pertinente dinamicamente en el tiempo de ejecucion.
+
+    Normalmente los diferentes algoritmos tienen diferentes contras, como la rapidez de este a costa del poder de procesado o memoria. Como vemos en el diagrama, el usuario solo 
+    tiene que saber que esta tratando con una interfaz de abstraccion. La implementacion hacen la misma pero de una manera diferente, aun que teniendo una interfaz comun.
+
+    El ejemplo canonico de este patron han sido siempre las rutinas de ordenado (a lo largo del tiempos se han desarrollado numerosos algoritmos para ordenar una coleccion de objetos).
+    En caso de que el cliente necesite una coleccion ordenada solo tendra que pasarlo a un objeto con el metodo sort(), independientemente de que tipo de estrategia tenga 
+    este objeto, ya que todos los resultados seran equivalentes, una lista ordenada.
+
+    Con este patron evitamos meter todo el codigo que implementemos para procesar la informacion entre if. Ahora simplemente hay que hacer la llamada a la estrategia mas conveniente y que 
+    esta se ocupe del procesado, ya que, como hemos dicho antes, todas comparten la misma interfaz (metodos con los mismos requerimientos en cuanto a argumentos)
+
+    -El patron de estados es, estructuralmente, similar al de estrategia, pero con unos objetivos diferentes. La funcion de este patron es representar sistemas de transicion de 
+    estados: sistemas donde es obvio que un objeto pueda estar en un estado determinado, y que diversas actividades pueden conducirlo a otro estado diferente.
+
+    Para hacerlo funcionar necesitamos un manejador que aporte una interfaz la cual permita cambiar de estados. Internamente esa interfaz contendra un puntero al estado actual. El estado 
+    en concreto sabra a que otros estados puede cambiar y que acciones pueden llevarlo al cambio.
+
+    Con lo que tenemos dos tipos de clases: el manejador de contexto y las multiples clases de estados. El manejador de contexto mantiene el estado actual y entrega las acciones a las clases 
+    de estados.
+
+    En el ejemplo que exponemos con el archivo ejemplo_xml.xml, queremos diseñar al rededor de este unos estados con los que podamos leer dicho archivo y obtener la informacion de el. Primero
+    necesitaremos un estado para cuando no se haya comenzado a leer ningun nodo, al igual que para leer nodos iniciales y finales y tambien leer aquellos que tengan texto. Por otro lado, el hecho 
+    de cambiar de estado es complejo, ya que ¿como sabemos que tipo de nodo es?. Dada esta pregunta crearemos tambien un estado para elegir que estado sera el siguiente en 
+    el que entre nuestro programa, con lo que tendremos los siguientes estados:
+        -PrimerTag
+        -NodoHijo
+        -TagAbrir
+        -TagCerrar
+        -NodoTexto
+
+    En el ejemplo, una vez se le da a correr, ocurren las siguientes acciones:
+        -Entra por defecto el estado PrimerTag, con el que recogemos el tag "book", para despues devolver dicho string y establecer este nodo como 
+        el nodo de raiz, nodo del cual colgaran el resto de los que se creen posteriormente
+
+        -Se cambia el estado por el de NodoHijo, el cual dependiendo de como empiece el string, cambiara a uno de los tres estados restantes,
+        en este caso TagAbrir
+
+        -En el estado TagAbrir se encuentra el primer tag de apertura "author", se crea un nodo con este tag y con el nodo padre para referenciarlo, ademas 
+        de añadir este nodo a la lista de hijos
+
+        -Se cambia el estado por el de NodoHijo, el cual dependiendo de como empiece el string, cambiara a uno de los tres estados restantes,
+        en este caso NodoTexto
+
+        -En el estado NodoTexto se ubica el comienzo del tag de cierre y se recoge el texto desde el principio hasta dicho indice, para luego asignar este 
+        texto al nodo del padre anterior
+
+        -Se cambia el estado por el de NodoHijo, el cual dependiendo de como empiece el string, cambiara a uno de los tres estados restantes,
+        en este caso TagCerrar
+
+        -En el estado de TagCerrar se hace esencialmente lo contrario al de TagAbrir, una vez se ha recogido el string que contiene el tag, se vuelve a 
+        definir el nodoa ctual del parser como el nodo padre de este (TagAbrir). En este estado no se crean nodos y, obviamente, no se añaden a la lista de hijos
+        por que no tiene valor la informacion que se haya recogido, mas que el propio estado de TagCerrar haya sucedido
+
+        -Se cambia el estado por el de NodoHijo, el cual dependiendo de como empiece el string, cambiara a uno de los tres estados restantes,
+        en este caso TagAbrir
+
+        *Y asi sucesivamente hasta acabar de leer el documento por completo*
+
+    En cuanto a la jerarquia de parentesco, unicamente vemos un nodo padre, el PrimerTag, y un nodo hijo, TagAbrir, ya que tanto en el NodoTexto, en el cual 
+    unicamente se recoge texto para almacenarlo en el nodo TagAbrir, como en TagCerrar, en el cual se comprueba que efectivamente es el tag de cierre para despues 
+    volver al TagAbrir, no crean sus propios nodos. Por otra parte, de esta manera conseguimos obtener toda la informacion que necesitamos del archivo xml
+
+    -Como hemos visto, el patron de estados y el patron de estrategias es similar, tanto en su diagrama como en su implementacion. Quiza podriamos haber cambiado los 
+    estados por funciones en vez de envolverlas en objetos.
+
+    Pero, mientras que los dos tienen estructuras muy parecidas, resuelven problemas diferentes. El patron de estrategia se utiliza para elegir una en tiempo de 
+    ejecucion, generalmente solo uno de esos algoritmos sera el elegido para cada uso particulas. Por otro lado, el patron de estados esta diseñado para que se puedan 
+    cambiar los estados dinamicamente mientras evoliciona el proceso. Dicho esto, otra diferencia entre estos dos es que las estrategias del patron de estrategias, como 
+    vimos, no saben nada del resto del algoritmos, mientras que los estados se comunican entre si.
+
+    -El patron singleton es uno de los patrones mas controversiales, acusandolo mucha gente de ser un "anti-patron". Es uno de los patrones mas famosos y es util en 
+    lenguajes muy orientados a objetos. Es mas, la idea de dicho patron es muy util aun que implementemos el concepto de una manera totalmente diferente. La base del 
+    patron singleton es que solo exista una unica instancia para cada objeto. Normalmente estos objetos son una especie de manejador de clases, los cuales se necesita 
+    que esten referenciados en muchas partes del codigo, haciendolo dificil de leer
+
+    Por otro lado, cuando se usa singleton, el resto de objetos piden la instancia del manejador, con lo que no hace falta pasar una referencia. En la mayoria de 
+    entornos de desarrollo, el singleton se impone implementando el constructor de manera privada, para que nadie pueda crear mas instancias de dicho objeto, creando
+    una la primera vez que se llama y devolviendo esta cada vez que se vuelve a llamar. 
+
+    Como vemos en el ejemplo de "un_unico.py", aun que Python no tenga constructroes, para este caso en concreto hemos variado la implementacion de __new__() para asegurarnos
+    que no se crea mas de una instancia de este objeto. En cuanto a la practica, no es que esta sea muy transparente ni informativa por que en ningun momento es obvio que se 
+    ha creado una instancia de un objeto singleton. Podriamos evitar este problema añadiendo un buen docstring a la clase si es que creemos que es completamente 
+    necesario implementar este patron.
+
+    Pero el punto es que no lo necesitamos. Los programadores de Python miran mal el hecho de forzar a los usuarios de su codigo a una manera de pensar especifica, en cuanto 
+    al uso de este se refiere. Este patron puede interferir con computacion distribuida, programacion paralela y testeo automatizado, por ejemplo.
+
+    -Por otro lado, las variables de modulo pueden hacer las veces de singleton. Si es verdad que no son tan seguras como los objetos de este patron, ya que puedes reasignar 
+    en cualquier momento los valores de las variables, pero en Python es una practica aceptable (Si alguien tiene una razon valida para modificar los valores por que pararle).
+
+    Idealmente, aun que no siga los principios de singleton, deberiamos aportar una herramienta para acceder al valor por defecto del singleton, ademas de permitir crear 
+    otras instancias de este objeto. Para utilizar las variables a nivel de modulo, instanciamos una instancia de la clase despues de haberla definido (En cuanto a nuestro ejemplo 
+    de patron de estados, podriamos mejorarlo introduciendo variables a nivel de modulo para sustituir el crear un objeto nuevo cada vez que cambia el estado).
+
+    Todo lo que necesitamos hacer es crear variables y asignarle una instancia del objeto para que el resto de estados puedan acceder a ella sin necesidad de reinstanciar la clase 
+    cada vez que se pretende usar (el cambio esta implementado en variables_modulo/singleton_estados.py). Esta implementacion es posible debido a la manera de ejecutar el codigo en 
+    Python, ya que al poner las instanciaciones de objetos al final no deberia poder usarse en metodos que se han implementado arriba de estas. Esto puede ocurrir gracias a que no se 
+    definen los metodos hasta que no se crea un objeto de esta clase y se llama al metodo en concreto, tiempo para el cual estara el modulo al completo definido.
+
+    La diferencia conceptual de este ejemplo es, como hemos dicho, que no se malgasta memoria creando un monton de nuevas instancias, ya que reusamos un unico objeto estado para cada 
+    uno de ellos. Aun que estuviesen corriendo varios parsers, solo se necesitan estas clases para los estados.
+
+    
