@@ -1,0 +1,95 @@
+Puntos importantes sobre patrones de diseño:
+    -Contrariamente a los patrones del capitulo anterior, el patron adaptador se diseña para interactuar con codigo ya 
+    existente (como los adaptadores de cargadores que te permiten conectar un micro USB a un USB-C). El unico objetivo del
+    adaptador es realizar una conversion.
+
+    La adaptacion puede llevar a una variedad de tareas, como voncertir los argumentos a otro formato, ordenar de manera 
+    diferente los argumentos, ...
+
+    En su estructura, el patron adaptador se parece un decorador simplificado. Los decoradores siempre aportan la misma interfaz, 
+    mientras que el adaptador mapea entre interfaces. Si seguimos el diagrama, la interfaz1 quiere llamar al metodo de la clase 
+    Adaptador, accion(). Por un lado tenemos la interfaz2 que hace todo lo que queremos, pero aporta un metodo otra_accion(). La 
+    clase Adaptador implementa su funcion, en la interfaz, que mapea los argumentos a la interfaz2 existente
+
+    La ventaja en este caso es que el codigo que mapea interfaces esta todo en un mismo sitio. La alternativa seria bastante fea,
+    tendriamos que hacer la traduccion en multiples sitios cuando quisiesemos acceder al codigo.
+
+    Como podemos ver en el ejemplo de la calculadora de edad, el metodo calcular_edad() hace lo que queremos que haga, pero el argumento 
+    de entrada es un string, en vez del objeto ya implementado en Python, datetime. Por un lado, podriamos reescribir la clase (seria lo mas 
+    acertado) o, si fuese codigo que nos ha dado una tercera persona, podriamos escribir un adaptador que se encargase de la 
+    conversion del objeto datetime al string que requiere la calculadora
+
+    Con el adaptador_edad se consigue el objetivo de poder introducir un objeto datetime y que este convierta y llame a la segunda interfaz 
+    para que realize el calculo de la edad del usuario (sirve tanto para datetime.date como para datetime.time). 
+
+    Por otro lado, podriamos implementar un adaptador haciendo uso de la herencia multiple, creando una subclase de datetime en la que modificamos
+    el metodo split para que nos devuelva la informacion que necesitamos, como esta hecho en fecha_herencia.py. Esta solucion funciona al modificar 
+    el metodo, el cual es llamado en la clase CalculadoraEdad recibiendo la informacion necesaria, aun que no es optimo ya que pronto olvidariamos 
+    por que necesitariamos un metodo split en una clase de fecha.
+
+    -El patron fachada esta diseñado para aportar interfaces simples a un sistema complejo de componentes. Para las tareas complejas, podriamos necesitar 
+    interactuar con los objetos directamente, aun que hay, normalmente, un uso tipico del sistema por el cual estas interacciones complicadas no son necesarias.
+    Este patron de diseño nos permite definir un objeto que encasule este uso tipico del sistemas. Cada vez que queramos acceder a una funcionalidad tipica
+    podemos utilizar la interfaz simplificada del objeto. 
+
+    La fachada es, en muchos sentidos, como un adaptador, aun que la principal diferencia es que la fachada pretendie abstraer una interfaz simple de una compleja,
+    mientras que el adaptador solo pretende mapearlas.
+
+    -El patron peso mosca es un patron de optimizacion de memoria. Si bien, para el desarrollo de pequeñas aplicaciones es aceptable no tener en cuenta la memoria 
+    que utiliza, una vez se magnifica el tamaño de esta es importante, y trae su recompensa tenerlo en cuenta.
+
+    Dicho patron se asegura que objetos que comparten un estado pueden usar la misma memoria para ese estado mutuo. Normalmente solo se implementa una vez se ha 
+    demostrado que el programa tiene problemas de memoria.
+
+    Siguiendo el diagrama del patron, podemos ver que cada peso-mosca no tiene ningun estado en especifico, asi que cada vez que necesita realizar alguna accion se 
+    le ha de pasar el estado_especifico por la llamada. Normalmente la "fabrica" que devuelve el peso-mosca es un objeto separado y su objetivo es devolver un peso-mosca
+    dada una llave que le identifique (de forma parecida al patron singleton, en el que si no existia el objeto en concreto se creaba, en caso contrario se devolvia).
+
+    Si se piensa en un concesionario de coches, cada coche individualmente tiene un numero de esrie que le identifica, pero la mayoria de los detalles son comunes entre 
+    los coches del mismo modelo. Sin la implementacion del patron, todos los coches tendrian asignada una lista en la que estuviese estipulada todos las caracteristicas de estos, 
+    resultando en un uso masivo de memoria.
+
+    Con la implementacion del patron, podemos tener una lista de objetos que comparten caracteristicas dependiendo del modelo y referenciar ese modelo, 
+    ademas del numero de serie y el color para vehiculos en especifico. 
+
+    A diferencia del patron singleton, en el que se devuelve una unica instancia, en este ejemplo necesitamos tener varias dependiendo de la llave que se introduzca. Podriamos 
+    almacenar objetos en un diccionario y mapearlos a traves de su clave, pero esto significaria que este representado en la memoria aun cuando puede que no lo necesitemos. La solucion 
+    a este problema es el modulo "weakref", el cual contiene el objeto "WeakValueDictionary". En este diccionario, si un valor no tiene referencias externas a este, eventualmente 
+    sera recogido por el "basurero".
+
+    Como vemos en el ejemplo "modelo_coche.py", cuando contruimos un objeto con un nombre especifico, miramos si este existe en el diccionario de modelos, en caso afirmativo se devuelve, 
+    en caso contrario se instancia, se añade al diccionario y, para acabar, se devuelve. Por otro lado, como sabemos que el metodo __innit__() va a ser invocado de todas maneras, se ha 
+    implementado con valores por defecto, asegurandose de que solo se instancia una vez (con el nombre del modelo podemos obtener el objeto del diccionario). Es importante no crear un objeto 
+    con valores nulos, ya que este desaparecera en el objeto WeakValueDictionary
+
+    Para terminar, si tenemos varios objetos con propiedades en comun se podria aplicar el patron peso-mosca para reducir el impacto en la memoria del dispositivo
+
+    -El patron comando añade un nivel de abstraccion entre las acciones que se deben hacer y el objeto que las invoca. En este patron, el codigo del cliente crea un 
+    objeto comando que puede ser ejecutado mas tarde, el cual sabe de un objeto receptor que maneja su propio estado interno cuando un comando es 
+    ejecutado en el.
+
+    El objeto comando implementa una interfaz especifica (normalmente con un metodo execute/do_action()) y sigue la pista a los argumentos requeridos para realizar la accion. Finalmente, el 
+    objeto invocador ejecuta el comando en el tiempo asignado.
+
+    Un ejemplo del patron son acciones en una ventana grafica, asi como Salir (de la ventana), Guardar (un archivo), que son implementaciones de CommandInterface (GUI). Siguiendo el 
+    diagrama, podemos diferenciar las diferentes clases que se han implementado para este patron como:
+    
+    -Receptoras: estas clases representan aquellos objetos que seran los que reciban las acciones, en este caso Sali y Guardar
+        -Ventana
+        -Documento
+    
+    -Invocadoras: estas clases son aquellas que representan las llamadas a las funcionalidades de la aplicacion 
+        -Barra_herramientas
+        -Objetos_menu
+        -Atajos_teclado
+
+    -Comandos:  estas clases representan la funcionalidad 
+        -Guardar
+        -Salir 
+
+    -El patron de fabrica abstracto se aplica cuando hay multiples soluciones en las que el sistema dependa de alguna configuracion o problema en una plataforma. El codigo de la llamada requiere 
+    un objeto de la fabrica abstracta, sin saber exactamente que es (la implementacion que se devuelva puede variar por muchos factores como el OS o la configuracion local). Ejemplos comunes de la
+    aplicacion de este patron incluyen toolkits para OS, BD o formateadores y calculadoras especificas para un pais.
+
+    -El patron de composicion permite construir estructuras en arbol complejas en base a componentes simples. Estos componentes, llamados objetos compuestos, son capaces de comportarse como un contenedor 
+    o como una variable dependiendo de si tienen componentes hijos (Los objetos compuestos son contenedores, los cuales pueden contener otro objeto compuesto).
