@@ -1,0 +1,250 @@
+Puntos importantes sobre el testeo de programas:
+    -Si es verdad que puede ser poco atractivo escribir codigo de prueba para comprobar que tu programa funciona como deberia, la automatizacion 
+    de este proceso es optima para poder hacer comprobaciones en nuestro codigo. Es mas, hay varias razones por las cuales es aconsejable hacer 
+    este tipo de automatizacion:
+        -Asegurar que el codigo realiza las tareas por las cuales se desarrollo
+        -Asegurar que el codigo sigue funcionando incluso despues de modificarlo
+        -Asegurar que el desarrollador ha entendido el objetivo del desarrollo
+        -Asegurar que el codigo implementado tienee una interfaz facil de mantener en el tiempo
+
+    Siguiendo este tren del pensamiento, existe una corriente en la cual se centra en el desarrollo guiado por el testeo, cuyo mantra lee 
+    "Escribe tests primero" y el cual lleva el concepto de "codigo sin testear es codigo roto" a otro nivel, suguiriendo que el unico codigo que 
+    no deberia contar con codigo de comprobacion es aquel que no se ha escrito.
+
+    Es mas, el escribir codigo para probar la solucion implementada puede ayudarnos incluso antes de la implementacion, en la fase de diseño, ya 
+    que nos puede ayudar a conceptualizar las interacciones que tendra la clase o los metodos necesarios para brindar la funcionalidad al programa.
+
+    -En Python existe la libreria implementada "unittest", la cual esta enfocada en comprobar la minima cantidad de codigo en cada test. Dentro de 
+    las herramientas que nos proporciona dicho modulo, la clase TestCase es una de las mas importantes, con metodos que nos ayudaran a comprobar valores, 
+    preparar test y limpiar el codigo una vez haya acabado la ejecucion. 
+
+    Este objeto funciona creando tu propia instancia personalizada, con los metodos necesarios para el testeo del codigo (todos comenzando con "test").
+    Una vez se siga esta convencion del lenguaje, los tests se correran automaticamente en el proceso de ejecucion. Normalmente las pruebas 
+    asignan valores a un objeto, corren el metodo y usan el metodo de comparacion integrado en Python para asegurarse que es correcto el resultado.
+    Ademas, existe un metodo setup(), que hace las veces de __init__(), en el que puedes definir valores para variables de la clase con las que 
+    trabajar posteriormente
+
+    Como podemos comprobar en el escript test_case.py, al declarar una subclase de TestCase y crear metodos comenzandolos con test, estos corren 
+    automaticamente, escribiendo por pantalla si superan la prueba o si, por el contrario, el resultado es negativo.
+
+    *PJ:def test_int_float(self):
+            self.assertEqual(1, 1.0)
+    Con esta implementacion del metodo, el resultado que salga por pantalla sera el siguiente: 
+        .
+        ----------------------------------------------------------------------
+        Ran 1 test in 0.000s
+
+        OK
+    
+    Este mensaje nos indica que se ha realizado la comprobacion con exito (.) y la cantidad de test y el tiempo de ejecucion del programa
+
+    Como se puede ver en el metodo anterior, se utiliza el metodo assertEqual() para comprobar si ambos numeros son equivalentes. Los metodos asertivos 
+    son la base de los tests unitarios, en los que se comprueban la relacion entre una variable conocida y la ejecucion de un/os metodo/s.
+    Algunos de los asserts mas usados son:
+     
+        - assertEqual                                         |         Aceptan dos objetos comparables y 
+        - assertNotEqual                                      |         aseguran la in/equidad del nombre 
+        - assertTrue                                          |         del propio assert
+        - assertFalse                                         |
+        - assertGreater                                       |
+        - assertGreaterEqual                                  |
+        - assertLess                                          |
+        - assertLessEqual                                     |
+        -----------------------------------------------------------------------------------------------------
+
+        - assertIn                                            |         Comprueban si un elemento esta, o no 
+        - assertNotIn                                         |         en un objeto contenedor
+        -----------------------------------------------------------------------------------------------------
+
+        - assertIsNone                                        |         Prueban que un valor de un elemento es 
+        - assertIsNotNone                                     |         exactamente, o no, "None"
+        -----------------------------------------------------------------------------------------------------
+        
+        - assertSameElements                                  |         Comprueba que dos contenedores tienen
+                                                                        los mismos valores
+        -----------------------------------------------------------------------------------------------------
+
+        - assertSequenceEqualassertDictEqual                  |         Comprueba que dos contenedores tienen los 
+        - assertSetEqual                                      |         mismos elementos en el mismo orden. Si hay algun
+        - assertListEqual                                     |         fallo muestra el codigo comparando ambos
+        - assertTupleEqual                                    |
+        -----------------------------------------------------------------------------------------------------
+
+        Todos estos metodos de comprobacion aceptan un ultimo argumento "msg", en el cual se puede especificar un string para mostrar por pantalla 
+        en caso de que la comparacion falle.
+
+    Para finalizar, cabe destacar el metodo tearDown(), el cual es llamado al final de cada ejecucion de test, aun que se haya levantado una excepcion.
+    Cualquier excepcion que no sea AssertionError or SkipTest sera considerada un error mas, en vez de un fallo en el test. El objetivo de la implementacion
+    de dicho metodo es la limpieza de los resultados de las comprobaciones realizadas.
+ 
+    - Por otra parte, una vez empieza el desarrollo de las pruebas, llega rapidamente el momento en el que el volumen de comprobaciones se hace enorme
+    como para manejarlo, y ya que queremos una respuesta rapida de si el codigo funciona, puede ser engorroso correr archivos enormes para la comprobacion.
+    Por lo que, como hacemos con el codigo que desarrollamos en las soluciones, deberiamos separar los test por modulos.
+
+    Si se nombran todos estos modulos con la siguiente estructura: test_*.py, existe el modulo discover, el cual busca archivos con dicha nomenclatura y ejecuta
+    los objetos TestCase que encuentre en ellos. Para ejecutar dicho modulo se tendra que situar en el directorio donde esten los archivos y ejecutar el siguiente 
+    comando: python3 -m unittest discover
+
+    Dentro de la sintaxis que podemos utilizar en las pruebas, encontramos los decoradores, con los que podemos especificar, por ejemplo, si queremos que se salte 
+    una prueba en concreto. Existen los siguientes decoradores:
+        
+        - expectedFailure()
+        - skip("razon")
+        - skipIf(condicion, "razon")
+        - skipUnless(condicion, "razon")
+
+    Al añadir los decoradores en el nuevo archivo test_saltar.py, una vez corremos (esto puede variar depende el sistema en el que este o de la version de Python), el resultado 
+    se vera como el siguiente:
+
+    xssF
+    ======================================================================
+    FAIL: test_saltarSi (__main__.SaltarTest)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "c:\Users\damnr\Documents\Libro python\Capitulos\Chapter_12-Testeo_en_programas_OOP\archivos\test_saltar.py", line 15, in test_saltarSi
+        self.assertEqual(False, True)
+    AssertionError: False != True
+
+    ----------------------------------------------------------------------
+    Ran 4 tests in 0.001s
+
+    FAILED (failures=1, skipped=2, expected failures=1)
+
+    En el que vemos que en el primer test se espera un fallo (marcado con una x), los dos siguientes se han saltado (marcado con una s) y que 
+    finalmente el ultimo ha fallado (como ya hemos visto, marcado con una F)
+
+    - Hay una alternativa al modulo integrado de unittest, pytest. Este no se rige tanto por las clases a la hora de formar los test, si no que se aprovecha 
+    de que en python las funciones son objetos por si mismos y, ayudandose de una sintaxis concreta, permite a estas funciones comportarse como un test. Cuando 
+    corremos pytest, similar a como lo hace unittest, busca en el direcctorio archivos que comiencen en test_. Si las funciones de dicho archivo tambien 
+    empiezan de la misma manera seran ejecutadas como test individuales (estas seran ejecutadas en un ambiente de pruebas).
+    *para ejecutar los test con pytest es necesario instalarlo, ya que no esta integrado en python. Una vez este installado, para correr un archivo, habra que 
+    posicionarse en el directorio en el que este dicho archivo y ejecutar: pytest test_*.py*
+    La ejecucion del archivo test_numeros.py se veria de la siguiente manera:
+        - plataforma e interprete
+        - directorio
+        - numero de tests
+        - nombre del archivo y resultados de los tests
+        
+    
+    ================================================= test session starts ================================================= 
+    platform win32 -- Python 3.10.5, pytest-7.1.2, pluggy-1.0.0
+    rootdir: C:\Users\damnr\Documents\Libro python\Capitulos\Chapter_12-Testeo_en_programas_OOP\archivos
+    collected 2 items
+    test_numeros.py .F                                                                                               [100%]
+    ====================================================== FAILURES ======================================================= 
+    ______________________________________________ TestNumeros.test_int_str _______________________________________________ 
+    self = <archivos.test_numeros.TestNumeros object at 0x0000020D4E5B2B60>                                                 
+    def test_int_str(self):                                                                                             
+    >       assert 1 == "1"                                                                                                 
+    E       AssertionError: assert 1 == '1'
+    test_numeros.py:6: AssertionError
+    =============================================== short test summary info =============================================== 
+    FAILED test_numeros.py::TestNumeros::test_int_str - AssertionError: assert 1 == '1'                                     
+    ============================================= 1 failed, 1 passed in 0.06s =============================================
+
+    Pytest tambien soporta metodos similares a los de unittest para la configuracion y limpieza de los test (setUp() y tearDown()) pero con aun mas flexibilidad.
+    Dicho esto, en este modulo no se utilizan tanto, ya que existen poderosas instalaciones fijas que se ocupan de esto.
+
+    Si estamos escribiendo una comprobacion basada en clases, podemos utilizar los dos metodos (setup_method() y teardown_method()) de la misma manera que los usariamos 
+    en el modulo unittest. Estos seran llamados antes y despues de cada funcion, para configurar y limpiar la ejecucion. Cabe destacar la diferencia entre estos metodos 
+    y los implementados en unittest: en pytest pueden recibir como argumento el objeto de la funcion que van a testear. Tambien existen setup_class() y teardown_class(),
+    los cuales se ejecutan al iniciar la clase, en vez de en cada ejecucion de cada metodo.
+
+    Finalmente, tenemos las funciones de setup_module() y teardown_module(), las cuales se ejecutan inmediatamente antes y despues de cada prueba. Estos son utiles para 
+    realizar una configuracion unica antes de probar el codigo, como levantar un socket o abrir una conexion a la base de datos que usaran los test. Al ejecutar el 
+    archivo test_base_test.py mediante el comando de pytest (añadiendo el comando -s o --capture=no) observamos el siguiente resultado: 
+    *
+        test_base_test.py 
+        Configurando el MODULO archivos.test_base_test
+        Ejecutando una funcion
+        .Configurando la CLASE TestClase1
+        Configurando el METODO test_metodo_1
+        Ejecutando el METODO 1-1
+        .Limpiando el METODO test_metodo_1 
+        Configurando el METODO test_metodo_2
+        Ejecutando el METODO 1-2
+        .Limpiando el METODO test_metodo_2
+        Limpiando la CLASE TestClase1
+        Configurando la CLASE TestClase2
+        Configurando el METODO test_metodo_1
+        Ejecutando el METODO 2-1
+        .Limpiando el METODO test_metodo_1
+        Configurando el METODO test_metodo_2
+        Ejecutando el METODO 2-2
+        .Limpiando el METODO test_metodo_2
+        Limpiando la CLASE TestClase2
+        Limpiando el MODULO archivos.test_base_test
+    *
+
+    En el que vemos representado el orden de ejecucion de los setup_* y los teardown_*, asi como la ejecucion de los diferentes test (modulo -> clase -> funcion en ese orden). 
+    Aun que ya se haya dicho, es necesario resaltar que tanto metodos como clases de pruebas han de comenzar con "test", ademas de extender por herencia clases, 
+    si hemos implementado una para configurar clases y metodos.
+
+    - Uno de los usos mas comunes de los metodos setup_ y teardown_ es para asegurarse que ciertas variables de modulo o de clase son accesibles y tienen asignadas un 
+    valor conocido antes de que se ejecute cada prueba. Como se ha anticipado antes, pytest cuenta con "fixtures" (often plural	"elemento fijo" nm + adj), las cuales son 
+    variables predefinidas en un archivo de configuracion de pruebas. Esto nos permite separar la configuracion del testing en si y permite el uso de fixtures en multiples 
+    clases y modulos.
+
+    Para usar las fixtures, añadimos parametros a nuestra funcion de prueba. Los nombres de los parametros son usados para mirar argumentos en especifico en funciones 
+    con nombres "especiales". Por ejemplo, cuando queriamos demostrar el funcionamiento de ListaEstadistica, con la que usamos unittest, configurabamos la lista de la siguiente 
+    manera:
+
+        def setUp(self):
+            self.estadistica = ListaEstadistica([1, 2, 2, 3, 3, 4]) 
+
+    Mientras que con las fixtures se podrian definir con un decorador como en el siguiente ejemplo:
+
+        @pytest.fixture
+        def estadisticas_validas(self):
+            self.estadistica = ListaEstadistica([1, 2, 2, 3, 3, 4])
+
+    Una vez definida la configuracion deberiamos pasar por argumento a las funciones que queremos que utilicen esta lista de la siguiente manera:
+
+        def test_mean(estadisticas_validas):
+            assert estadisticas_validas.mean() == 2.5
+
+    Si es verdad que esto es util usar los decoradores de esta manera, las fixtures tienen mas funcionalidades que la de devolver una simple variable. Se le puede pasar un objeto
+    "request" a la "fixture factory" (la funcion definida con el decorador, estadisticas_validas() en este caso) para otorgar metodos y atributos extremadamente utiles 
+    para modificar el comportamiento de la "funcarg" (referencia de una funcion, trasmitida como agrumento a otra). Los atributos module, cls y function nos permiten ver exactamente
+    cual es el test que esta pidiendo la fixture. El atributo config nos permite comprobar los argumentos de la linea de comandos, ademas de otra mucha informacion de configuracion
+
+    Si implementamos la fixture como un generador, podemos correr codigo de limpieza despues de correr cada test, lo cual produciria un efecto similar al del metodo teardown. Como se 
+    ve en el archivo test_fixture_generador.py, la funcion dir_temporal() es un generador, el cual creara un directorio temporal, lo devolvera con el yield y luego se ejecutara 
+    el codigo de la siguiente funcion, en este caso una prueba, test_archivos_os(), en la que se crearan dos archivos dentro del directorio devuelto. Finalmente, una vez acabe su ejecucion,
+    volvera a ejecutarse la generadora dir_temporal() y borrara el directorio creado, dejando el SO en el mismo estado.
+
+    Tambien podemos incorporar un parametro "scope" para hacer que la fixture dure mas de una ejecucion de test. Esta es util cuando se necesita configurar una operacion costosa que puede ser 
+    reusada por diferentes modulos. Como podemos ver en el archivo de prueba test_echo_server.py, en la fixture que hay definida en echoserver(), @pytest.fixture(scope="session") se introduce 
+    "session" como kwarg, lo cual informa a pytest que queremos instanciarlo durante la duracion de la prueba. 
+
+    Este argumento puede tener varios valores:
+        -Class: trata el objeto como un setup_ y teardown_ de una clase normal
+        -Module: cachea la informacion solo para los test del modulo en el que se encuentra
+        -Package: cachea la informacion solo para los test del paquete en el que se encuentra
+        -Session: cachea la informacion durante la duracion del test 
+
+    - Como en el modulo unittest, en pytest tambien podemos saltar pruebas que no necesitemos hacer con el uso de la funcion pytest.skip(). Esta funcion acepta un unico argumento, siendo este un 
+    string que debera describir la causa de por que ha de saltarse esta prueba (PJ: pytest.skip("No es compatible con la version de este OS")). Si hacemos la llamada dentro de una funcion, saltara 
+    la ejecucion de esta, si es a nivel de modulo, todos los test de dicho modulo se quedaran sin ejecutar, y si sehace en una fixture, todas aquellas funciones que usen esa funcarg se quedaran sin
+    correr.
+
+    Como la funcion skip es mayormente utilizada en funciones, hay un decorador implementado en el que se puede establecer el salto de una prueba sin necesidad de llamar a esta funcion. Este decorador 
+    tambien tiene un solo argumento en el que se ha de introducir un string con una condicion para no ejecutar la funcion en concreto (PJ: @pytest.mark.skipIf( "sys.version_info <= (3.0)" ) ). Por otro lado,
+    tambien hay un decorador similar al expectedFailure() del modulo unittest para pytest, llamado pytest.mark.xfail. En este caso en concreto, el string condicional es opcional (en el caso de no proveer uno
+    se marcara como que se espera que falle bajo cualquier circunstancia).
+
+    * Pytest tiene muchisimas otras funcionalidades, en el caso de querer ampliar, visitad la pragina web https://docs.pytest.org/ *
+    
+    (Los archivo test_estado_vuelo.py y estado_vuelo_redis.py deberian tener los conceptos aqui explicados, pero la verdad es que me la sudan, tanto redis como mock.
+     Basicamente se explica que se pueden utilizar redis para guardar valores temporalmente y mock para sustituir funcionalidades con un objeto de prueba)
+
+    - Una vez establecido que cualquier codigo sin comprobar es codigo que esta roto, ¿ Como sabemos como de bien estamos probando el codigo? ¿O como sabemos cuanto de nuestro codigo 
+    esta realmente siendo probado y cuanto no? En el caso de la lista de estadisticas, si escribimos un test en el que solo se comprueban int, puede seguir fallando estrepitosamente cuando 
+    introduzcamos floats, strings o objetos personalizados, con lo que la obligacion de diseñar buenos test recae sobre los hombros del desarrollador.
+
+    En cuanto a la segunda pregunta, la cobertura de codigo es una estimacion entre las lineas que se han probado y la cantidad de lineas de codigo que conforman el programa. La herramienta mas 
+    popular para la cobertura de codigo es coverage.py (se puede instalar mediante pip install coverage):
+        -Con el comando $coverage run *nombre_test*.py puedes hacer una pasada para cubrir las lineas que se estan comprobando
+        -Con el comando $coverage report se escribe por pantalla los datos obtenidos del anteriro comando 
+        -Con el comando $coverage html te genera unos archivos para html con un reporte sobre la informacion obtenida de forma visual(en index.html se representara la tabla y en *nombre_test*.py.html se 
+        representara el codigo y se resaltara las lineas que se estan comprobando)
